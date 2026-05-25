@@ -72,7 +72,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
           backgroundColor: 'rgba(0,0,0,0.65)',
           backdropFilter: 'blur(4px)',
           zIndex: 1000,
-          animation: 'fadeIn 0.2s ease'
+          animation: 'fadeIn 0.35s ease-out'
         }}
       />
 
@@ -89,13 +89,13 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
         maxHeight: '90vh',
         overflowY: 'auto',
         boxShadow: '0 30px 60px rgba(0,0,0,0.3)',
-        animation: 'slideUp 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)'
+        animation: 'modalFlowIn 0.5s cubic-bezier(0.2, 1.15, 0.4, 1)'
       }}>
 
         {/* Header con foto */}
         <div style={{
           position: 'relative',
-          height: '240px',
+          height: 'clamp(120px, 25vh, 180px)',
           backgroundImage: `url(${product.imageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -127,51 +127,55 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
           {/* Burbuja de color */}
           <div style={{
-            position: 'absolute', bottom: '-20px', left: '1.5rem',
-            width: '48px', height: '48px',
+            position: 'absolute', bottom: '-15px', left: '1rem',
+            width: '40px', height: '40px',
             borderRadius: '50%',
             backgroundColor: product.colorHex,
-            border: '3px solid #fff',
+            border: '2px solid #fff',
             boxShadow: `0 4px 12px ${product.colorHex}88`
           }} />
         </div>
 
         {/* Contenido */}
-        <div style={{ padding: '2rem 1.5rem 1.5rem' }}>
+        <div style={{ padding: '1.25rem 1rem 1rem' }}>
           {/* Nombre + categoría */}
-          <div style={{ marginLeft: '3.5rem' }}>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: '900', color: '#212121', margin: 0 }}>
+          <div style={{ marginLeft: '3rem' }}>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: '900', color: '#212121', margin: 0 }}>
               {product.name}
             </h2>
-            <p style={{ fontSize: '0.8rem', color: '#9e9e9e', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0.25rem 0 0' }}>
+            <p style={{ fontSize: '0.7rem', color: '#9e9e9e', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase', margin: '0.1rem 0 0' }}>
               {product.category} · Mia Terra
             </p>
           </div>
 
           {/* Precio */}
-          <p style={{ fontSize: '1.8rem', fontWeight: '800', color: '#E53935', margin: '1rem 0 0.75rem' }}>
-            ${product.price} <span style={{ fontSize: '1rem', color: '#9e9e9e', fontWeight: '400' }}>MXN</span>
+          <p style={{ fontSize: '1.4rem', fontWeight: '800', color: '#E53935', margin: '0.5rem 0' }}>
+            ${product.price} <span style={{ fontSize: '0.85rem', color: '#9e9e9e', fontWeight: '400' }}>MXN</span>
           </p>
 
           {/* Separador */}
-          <div style={{ height: '1px', backgroundColor: '#f0f0f0', margin: '0 0 1rem' }} />
+          <div style={{ height: '1px', backgroundColor: '#f0f0f0', margin: '0 0 0.5rem' }} />
 
           {/* Descripción */}
           <p style={{
-            fontSize: '0.95rem',
-            lineHeight: '1.7',
+            fontSize: '0.85rem',
+            lineHeight: '1.4',
             color: '#424242',
-            margin: '0 0 0.75rem'
+            margin: '0 0 0.5rem',
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden'
           }}>
             {description}
           </p>
 
           {/* Badge natural */}
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', margin: '1rem 0' }}>
-            {['🌿 Natural', '🐰 Vegano', '✨ Sin Parabenos', '🌱 Sustentable'].map(tag => (
+          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', margin: '0.5rem 0' }}>
+            {['🌿 Natural', '🐰 Vegano', '✨ Sin Parabenos'].map(tag => (
               <span key={tag} style={{
-                fontSize: '0.7rem', fontWeight: '700',
-                padding: '0.25rem 0.6rem',
+                fontSize: '0.65rem', fontWeight: '700',
+                padding: '0.2rem 0.5rem',
                 borderRadius: '9999px',
                 backgroundColor: '#f1f8e9',
                 color: '#558b2f',
@@ -187,18 +191,18 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
             onClick={() => { addItem(product); onClose(); }}
             style={{
               width: '100%',
-              padding: '1rem',
+              padding: '0.8rem',
               backgroundColor: '#E53935',
               color: 'white',
               border: 'none',
               borderRadius: '12px',
-              fontSize: '1rem',
+              fontSize: '0.95rem',
               fontWeight: '800',
               cursor: 'pointer',
               letterSpacing: '1px',
               boxShadow: '0 4px 14px rgba(229,57,53,0.35)',
               transition: 'transform 0.1s ease',
-              marginTop: '0.5rem'
+              marginTop: '0.25rem'
             }}
             onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
             onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
@@ -210,9 +214,9 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
 
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp {
-          from { opacity: 0; transform: translate(-50%, -45%); }
-          to   { opacity: 1; transform: translate(-50%, -50%); }
+        @keyframes modalFlowIn {
+          0% { opacity: 0; transform: translate(-50%, -40%) scale(0.92); }
+          100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
       `}} />
     </>

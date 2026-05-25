@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import ProductStoriesBar from '../components/ProductStoriesBar';
+import CollageCardBackground from '../components/CollageCardBackground';
 
 const categories = [
   { id: 'labiales',     title: 'Labiales',       icon: '💄', image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80', href: '/labiales' },
@@ -26,19 +27,19 @@ export default function Home() {
         minHeight: '400px',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         alignItems: 'center',
         textAlign: 'center',
-        backgroundImage: 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?w=1600&q=80)',
+        backgroundImage: 'url(/logo2.jpeg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        color: '#FFF',
-        padding: '0 2rem'
+        padding: '0 2rem 4rem 2rem'
       }}>
-        <h1 style={{ fontSize: '3.5rem', fontWeight: '900', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '2px', textShadow: '0 4px 10px rgba(0,0,0,0.5)' }}>
-          Luna Teia
+        {/* Textos ocultos para SEO, ya que el logo incluye el texto */}
+        <h1 style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', border: 0 }}>
+          Luna Teia Cosméticos
         </h1>
-        <p style={{ fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto', marginBottom: '2rem', lineHeight: '1.6' }}>
+        <p style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', border: 0 }}>
           Descubre nuestra colección exclusiva de cosméticos diseñados para resaltar tu belleza única en cada ocasión.
         </p>
         <button
@@ -64,8 +65,12 @@ export default function Home() {
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-10px)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)'; }}
               >
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: `url(${cat.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%)' }} />
+                {cat.id === 'labiales' ? (
+                  <CollageCardBackground />
+                ) : (
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: `url(${cat.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                )}
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)' }} />
                 <div style={{ position: 'absolute', bottom: '2rem', left: '2rem', color: '#FFF' }}>
                   <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>{cat.icon}</span>
                   <h3 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0 }}>{cat.title}</h3>

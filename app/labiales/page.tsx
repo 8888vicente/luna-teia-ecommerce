@@ -19,7 +19,7 @@ const PRODUCTS = [
   { id: 'r7',  name: 'Naranja',       family: 'Rojos', category: 'Labial Indeleble Mate', price: 100, colorHex: '#f4511e', imageUrl: '/Naranja.jpg' },
   { id: 'r8',  name: 'Naranja Mate',  family: 'Rojos', category: 'Labial Indeleble Mate', price: 100, colorHex: '#e64a19', imageUrl: '/Naranja Mate.jpg' },
   { id: 'r9',  name: 'Tangerin',      family: 'Rojos', category: 'Labial Indeleble Mate', price: 100, colorHex: '#ff6d00', imageUrl: '/Tangerin.jpg' },
-  { id: 'r10', name: 'Mamey',         family: 'Rojos', category: 'Labial Indeleble Mate', price: 100, colorHex: '#d84315', imageUrl: '/Mamey .jpg' },
+  { id: 'r10', name: 'Mamey',         family: 'Rojos', category: 'Labial Indeleble Mate', price: 100, colorHex: '#d84315', imageUrl: '/Mamey_.jpg' },
   // ── ROSAS & FUCSIAS ──
   { id: 'p1',  name: 'Fiusha',        family: 'Rosas', category: 'Labial Indeleble Mate', price: 100, colorHex: '#e91e8c', imageUrl: '/Fiusha.jpg' },
   { id: 'p2',  name: 'Fiusha Mate',   family: 'Rosas', category: 'Labial Indeleble Mate', price: 100, colorHex: '#c2185b', imageUrl: '/Fiusha mate.jpg' },
@@ -29,7 +29,7 @@ const PRODUCTS = [
   { id: 'p6',  name: 'Rosa Seda',     family: 'Rosas', category: 'Labial Indeleble Mate', price: 100, colorHex: '#f48fb1', imageUrl: '/Rosa Seda.jpg' },
   { id: 'p7',  name: 'Palo Rosa',     family: 'Rosas', category: 'Labial Indeleble Mate', price: 100, colorHex: '#f8bbd0', imageUrl: '/Palo Rosa.jpg' },
   { id: 'p8',  name: 'Bugambilia',    family: 'Rosas', category: 'Labial Indeleble Mate', price: 100, colorHex: '#ad1457', imageUrl: '/Bugambilia.jpg' },
-  { id: 'p9',  name: 'Anis',          family: 'Rosas', category: 'Labial Indeleble Mate', price: 100, colorHex: '#d81b60', imageUrl: '/Anis .jpg' },
+  { id: 'p9',  name: 'Anis',          family: 'Rosas', category: 'Labial Indeleble Mate', price: 100, colorHex: '#d81b60', imageUrl: '/Anis_.jpg' },
   { id: 'p10', name: 'Moon',          family: 'Rosas', category: 'Labial Indeleble Mate', price: 100, colorHex: '#e8a0bf', imageUrl: '/Moon.jpg' },
   // ── VARIOS: NUDES, OSCUROS & ESPECIALES ──
   { id: 'v1',  name: 'Nature',        family: 'Varios', category: 'Labial Indeleble Mate', price: 100, colorHex: '#d7ccc8', imageUrl: '/Nature.jpg' },
@@ -41,7 +41,7 @@ const PRODUCTS = [
   { id: 'v7',  name: 'Expresso',      family: 'Varios', category: 'Labial Indeleble Mate', price: 100, colorHex: '#4e342e', imageUrl: '/Expresso.jpg' },
   { id: 'v8',  name: 'Cocoa',         family: 'Varios', category: 'Labial Indeleble Mate', price: 100, colorHex: '#6d4c41', imageUrl: '/Cocoa.jpg' },
   { id: 'v9',  name: 'Ciruela',       family: 'Varios', category: 'Labial Indeleble Mate', price: 100, colorHex: '#6a1b9a', imageUrl: '/Ciruela.jpg' },
-  { id: 'v10', name: 'Blackberry',    family: 'Varios', category: 'Labial Indeleble Mate', price: 100, colorHex: '#4a148c', imageUrl: '/Blackberry .jpg' },
+  { id: 'v10', name: 'Blackberry',    family: 'Varios', category: 'Labial Indeleble Mate', price: 100, colorHex: '#4a148c', imageUrl: '/Blackberry_.jpg' },
   // Tonos extra que no entran en 10x3 pero están en tu catálogo real
   { id: 'x1',  name: 'Purpura',       family: 'Varios', category: 'Labial Indeleble Mate', price: 100, colorHex: '#7b1fa2', imageUrl: '/Purpura.jpg' },
   { id: 'x2',  name: 'Piñon',         family: 'Varios', category: 'Labial Indeleble Mate', price: 100, colorHex: '#8d6e63', imageUrl: '/Piñon.jpg' },
@@ -65,7 +65,7 @@ export default function LabialesStore() {
         </p>
         
         {/* Toggle de Vista */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '0.5rem' }}>
           <div style={{ backgroundColor: '#ECEFF1', borderRadius: '9999px', padding: '0.25rem', display: 'flex', gap: '0.25rem' }}>
             <button 
               onClick={() => setViewMode('coverflow')}
@@ -87,14 +87,14 @@ export default function LabialesStore() {
         id="catalogo" 
         className={styles.productsSection} 
         style={{ 
-          paddingTop: '2rem', 
+          paddingTop: '0.5rem', 
           maxWidth: '100vw', 
           overflow: 'hidden',
-          background: 'linear-gradient(90deg, #f8bbd0 0%, #ffffff 40%, #ffffff 60%, #f8bbd0 100%)' // Degradado lateral más marcado
+          background: 'linear-gradient(90deg, #E0E0E0 0%, #F5F5F5 40%, #F5F5F5 60%, #E0E0E0 100%)' // Degradado gris suave
         }}
       >
         {viewMode === 'coverflow' ? (
-          <Coverflow products={PRODUCTS} families={FAMILIES} />
+          <Coverflow products={PRODUCTS} families={FAMILIES} onProductClick={setSelectedProduct} />
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem', width: '100%', padding: '0 1rem' }}>
             {FAMILIES.map(family => (

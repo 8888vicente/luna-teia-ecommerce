@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCart, Product } from '../context/CartContext';
 
 interface CoverflowProps {
   products: Product[];
   families: string[];
+  onProductClick?: (product: Product) => void;
 }
 
-export default function Coverflow({ products, families }: CoverflowProps) {
+export default function Coverflow({ products, families, onProductClick }: CoverflowProps) {
   const [activeFamilyIndex, setActiveFamilyIndex] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const { addItem } = useCart();
@@ -40,31 +41,27 @@ export default function Coverflow({ products, families }: CoverflowProps) {
   const activeProduct = familyProducts[activeIndex];
 
   // Prevent default scroll when hovering the coverflow
-  useEffect(() => {
-    const handleWheelGlobal = (e: WheelEvent) => {
-      e.preventDefault();
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && Math.abs(e.deltaY) > 20) {
-        if (e.deltaY > 0) handleDown();
-        else handleUp();
-      }
-    };
+  // Se eliminó el cambio de familia con scroll del mouse a petición del usuario.
+  // El usuario ahora usará los botones de categoría.
 
-    const container = document.getElementById('coverflow-container');
-    if (container) {
-      container.addEventListener('wheel', handleWheelGlobal, { passive: false });
-    }
-    return () => {
-      if (container) container.removeEventListener('wheel', handleWheelGlobal);
-    };
-  }, [families.length]);
+  // Gestos táctiles (Swipe)
+  const touchStart = useRef({ x: 0, y: 0 });
 
-  let touchStartY = 0;
-  const handleTouchStart = (e: React.TouchEvent) => { touchStartY = e.touches[0].clientY; };
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStart.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY
+    };
+  };
+
   const handleTouchEnd = (e: React.TouchEvent) => {
-    const touchEndY = e.changedTouches[0].clientY;
-    const diff = touchStartY - touchEndY;
-    if (diff > 50) handleDown();
-    else if (diff < -50) handleUp();
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchStart.current.x - touchEndX;
+    
+    // Deslizar izquierda -> siguiente
+    if (diffX > 50) handleNext();
+    // Deslizar derecha -> anterior
+    else if (diffX < -50) handlePrev();
   };
 
   if (!activeProduct) return null;
@@ -83,23 +80,26 @@ export default function Coverflow({ products, families }: CoverflowProps) {
         overflow: 'hidden'
       }}
     >
-      {/* Category Tabs (Solo si hay más de 1 familia) */}
+      {/* Category Tabs (Resaltados) */}
       {families.length > 1 && (
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', overflowX: 'auto', padding: '0.25rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', overflowX: 'auto', padding: '0.5rem', backgroundColor: '#FFF', borderRadius: '9999px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', zIndex: 10 }}>
           {families.map((family, idx) => (
             <button
               key={family}
               onClick={() => setActiveFamilyIndex(idx)}
               style={{
-                padding: '0.25rem 1rem',
-                fontSize: '0.8rem',
+                padding: '0.6rem 1.5rem',
+                fontSize: '0.95rem',
                 borderRadius: '9999px',
-                fontWeight: 'bold',
+                fontWeight: '900',
                 border: 'none',
                 cursor: 'pointer',
-                backgroundColor: activeFamilyIndex === idx ? '#212121' : '#ECEFF1',
+                backgroundColor: activeFamilyIndex === idx ? '#E53935' : 'transparent',
                 color: activeFamilyIndex === idx ? '#FFF' : '#757575',
-                transition: 'all 0.3s'
+                transition: 'all 0.3s ease',
+                boxShadow: activeFamilyIndex === idx ? '0 4px 10px rgba(229,57,53,0.3)' : 'none',
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase'
               }}
             >
               {family.toUpperCase()}
@@ -145,7 +145,10 @@ export default function Coverflow({ products, families }: CoverflowProps) {
           return (
             <div
               key={product.id}
-              onClick={() => setActiveIndex(index)}
+              onClick={() => {
+                if (isCenter && onProductClick) onProductClick(product);
+                else setActiveIndex(index);
+              }}
               style={{
                 position: 'absolute',
                 width: '120px',

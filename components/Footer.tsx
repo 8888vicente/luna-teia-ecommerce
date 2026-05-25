@@ -18,9 +18,13 @@ export default function Footer() {
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', color: '#B0BEC5', fontSize: '0.9rem' }}>
         <span>© 2026 Luna Teia</span>
         <span>|</span>
-        <a href="#" style={{ textDecoration: 'underline' }}>Políticas de Envío</a>
+        <a href="/politicas" style={{ textDecoration: 'underline', color: '#B0BEC5' }}>
+          Políticas de Envío
+        </a>
         <span>|</span>
-        <a href="#" style={{ textDecoration: 'underline' }}>Contacto</a>
+        <a href="/#contacto" style={{ textDecoration: 'underline', color: '#B0BEC5' }}>
+          Contacto
+        </a>
       </div>
     </footer>
   );

@@ -19,8 +19,12 @@ export default function Navbar() {
       top: 0,
       zIndex: 100
     }}>
-      <Link href="/" style={{ fontSize: '1.5rem', fontWeight: '800', color: '#E53935', letterSpacing: '0.5px' }}>
-        LUNA TEIA
+      <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+        <img 
+          src="/logo1.jpeg" 
+          alt="Luna Teia Cosméticos" 
+          style={{ height: '45px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
+        />
       </Link>
       
       <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>

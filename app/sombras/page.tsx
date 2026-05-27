@@ -5,7 +5,7 @@ import styles from "../labiales/page.module.css";
 import { Product, useCart } from "../../context/CartContext";
 import Coverflow from "../../components/Coverflow";
 import ProductModal from "../../components/ProductModal";
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const PRODUCTS = [
   { id: 's1', name: 'Sombra Ceja Clara', family: 'Sombras de Ceja', category: 'Polvo Compacto', price: 95, colorHex: '#d7ccc8', imageUrl: '/sombra-ceja/sombra%20ceja%20clara.jpg' },
@@ -21,14 +21,14 @@ export default function SombrasStore() {
   const [viewMode, setViewMode] = useState<'coverflow' | 'grid'>('coverflow');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
-    const pid = searchParams?.get?.('productId');
+    if (typeof window === 'undefined') return;
+    const pid = new URLSearchParams(window.location.search).get('productId');
     if (!pid) return;
     const prod = PRODUCTS.find(p => p.id === pid);
     if (prod) setSelectedProduct(prod);
-  }, [searchParams]);
+  }, []);
 
   return (
     <main className={styles.main}>
@@ -44,18 +44,37 @@ export default function SombrasStore() {
           Define y perfila tu mirada con precisión.
         </p>
         
+        {/* Navegación entre tiendas */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+          <a href="/labiales" style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', backgroundColor: '#757575', color: 'white', textDecoration: 'none', fontWeight: 'bold', fontSize: '0.75rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#616161'} onMouseLeave={e => e.currentTarget.style.backgroundColor = '#757575'}>
+            Labiales
+          </a>
+          <a href="/sombras" style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', backgroundColor: '#E53935', color: 'white', textDecoration: 'none', fontWeight: 'bold', fontSize: '0.75rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#C62828'} onMouseLeave={e => e.currentTarget.style.backgroundColor = '#E53935'}>
+            Sombras de Ceja
+          </a>
+          <a href="/delineadores" style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', backgroundColor: '#757575', color: 'white', textDecoration: 'none', fontWeight: 'bold', fontSize: '0.75rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#616161'} onMouseLeave={e => e.currentTarget.style.backgroundColor = '#757575'}>
+            Delineadores
+          </a>
+          <a href="/brillo" style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', backgroundColor: '#757575', color: 'white', textDecoration: 'none', fontWeight: 'bold', fontSize: '0.75rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#616161'} onMouseLeave={e => e.currentTarget.style.backgroundColor = '#757575'}>
+            Rímel & Máscara
+          </a>
+          <a href="/otros" style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', backgroundColor: '#757575', color: 'white', textDecoration: 'none', fontWeight: 'bold', fontSize: '0.75rem', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#616161'} onMouseLeave={e => e.currentTarget.style.backgroundColor = '#757575'}>
+            Otros Productos
+          </a>
+        </div>
+        
         {/* Toggle de Vista */}
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
-          <div style={{ backgroundColor: '#ECEFF1', borderRadius: '9999px', padding: '0.25rem', display: 'flex', gap: '0.25rem' }}>
+          <div style={{ backgroundColor: '#ECEFF1', borderRadius: '9999px', padding: '0.25rem', display: 'flex', gap: '0.25rem', position: 'relative' }}>
             <button 
               onClick={() => setViewMode('coverflow')}
-              style={{ padding: '0.5rem 1rem', borderRadius: '9999px', fontWeight: 'bold', backgroundColor: viewMode === 'coverflow' ? '#FFF' : 'transparent', boxShadow: viewMode === 'coverflow' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none', color: viewMode === 'coverflow' ? '#E53935' : '#757575', transition: 'all 0.2s', border: 'none', cursor: 'pointer' }}
+              style={{ padding: '0.5rem 1rem', borderRadius: '9999px', fontWeight: 'bold', backgroundColor: viewMode === 'coverflow' ? '#FFF' : 'transparent', boxShadow: viewMode === 'coverflow' ? '0 4px 12px rgba(0,0,0,0.15)' : 'none', color: viewMode === 'coverflow' ? '#E53935' : '#757575', transition: 'all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)', border: 'none', cursor: 'pointer', transform: viewMode === 'coverflow' ? 'scale(1.02)' : 'scale(1)', zIndex: viewMode === 'coverflow' ? 2 : 1 }}
             >
               Vista Interactiva
             </button>
             <button 
               onClick={() => setViewMode('grid')}
-              style={{ padding: '0.5rem 1rem', borderRadius: '9999px', fontWeight: 'bold', backgroundColor: viewMode === 'grid' ? '#FFF' : 'transparent', boxShadow: viewMode === 'grid' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none', color: viewMode === 'grid' ? '#E53935' : '#757575', transition: 'all 0.2s', border: 'none', cursor: 'pointer' }}
+              style={{ padding: '0.5rem 1rem', borderRadius: '9999px', fontWeight: 'bold', backgroundColor: viewMode === 'grid' ? '#FFF' : 'transparent', boxShadow: viewMode === 'grid' ? '0 4px 12px rgba(0,0,0,0.15)' : 'none', color: viewMode === 'grid' ? '#E53935' : '#757575', transition: 'all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)', border: 'none', cursor: 'pointer', transform: viewMode === 'grid' ? 'scale(1.02)' : 'scale(1)', zIndex: viewMode === 'grid' ? 2 : 1 }}
             >
               Vista Clásica
             </button>
@@ -89,7 +108,7 @@ export default function SombrasStore() {
                     <div key={product.id} style={{ minWidth: '250px', border: '1px solid #ECEFF1', borderRadius: '8px', padding: '1rem', textAlign: 'center', transition: 'transform 0.2s', cursor: 'pointer', scrollSnapAlign: 'start', backgroundColor: '#FFF' }}>
                       <div
                         onClick={() => setSelectedProduct(product)}
-                        style={{ width: '100%', aspectRatio: '1', backgroundColor: '#F5F5F5', borderRadius: '50%', marginBottom: '1rem', backgroundImage: `url(${product.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.1)', cursor: 'pointer' }}
+                        style={{ width: '100%', height: '250px', backgroundColor: '#F5F5F5', borderRadius: '8px', marginBottom: '1rem', backgroundImage: `url(${product.imageUrl})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', border: '1px solid #E0E0E0' }}
                       />
                       <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{product.name}</h3>
                       <p style={{ color: '#757575', marginBottom: '0.5rem', fontSize: '0.8rem' }}>{product.category}</p>

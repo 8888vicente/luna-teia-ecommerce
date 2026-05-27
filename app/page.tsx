@@ -4,10 +4,12 @@ import React from 'react';
 import Link from 'next/link';
 import ProductStoriesBar from '../components/ProductStoriesBar';
 import CollageCardBackground from '../components/CollageCardBackground';
+import FacebookReviews from '../components/FacebookReviews';
+import HeroSliderBackground from '../components/HeroSliderBackground';
 
 const categories = [
   { id: 'labiales',     title: 'Labiales',       icon: '💄', image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80', href: '/labiales' },
-  { id: 'sombras',      title: 'Sombras de Ceja', icon: '👁️', image: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?w=600&q=80', href: '/sombras' },
+  { id: 'sombras',      title: 'Sombras de Ceja', icon: '👁️', image: '/sombra-ceja/scnmt.jpg', href: '/sombras' },
   { id: 'delineadores', title: 'Delineadores',    icon: '🖌️', image: 'https://images.unsplash.com/photo-1625093742435-6fa192b6fb10?w=600&q=80', href: '/delineadores' },
   { id: 'brillo',       title: 'Rímel',           icon: '✨', image: 'https://images.unsplash.com/photo-1512496015851-a1c8d4f051c0?w=600&q=80', href: '/brillo' },
   { id: 'otros',        title: 'Otros',           icon: '📦', image: 'https://images.unsplash.com/photo-1617220828111-eb2412353ec8?w=600&q=80', href: '/otros' },
@@ -23,33 +25,36 @@ export default function Home() {
       {/* ── HERO BANNER ── */}
       <section style={{
         position: 'relative',
-        height: '60vh',
-        minHeight: '400px',
+        height: '75vh',
+        minHeight: '500px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-end',
         alignItems: 'center',
         textAlign: 'center',
-        backgroundImage: 'url(/logo2.jpeg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        padding: '0 2rem 4rem 2rem'
+        padding: '0 2rem 4rem 2rem',
+        overflow: 'hidden'
       }}>
-        {/* Textos ocultos para SEO, ya que el logo incluye el texto */}
-        <h1 style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', border: 0 }}>
-          Luna Teia Cosméticos
-        </h1>
-        <p style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', border: 0 }}>
-          Descubre nuestra colección exclusiva de cosméticos diseñados para resaltar tu belleza única en cada ocasión.
-        </p>
-        <button
-          onClick={() => document.getElementById('categorias')?.scrollIntoView({ behavior: 'smooth' })}
-          style={{ backgroundColor: '#E53935', color: 'white', padding: '1rem 2.5rem', fontSize: '1.1rem', fontWeight: 'bold', borderRadius: '9999px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 15px rgba(229, 57, 53, 0.4)', transition: 'transform 0.2s' }}
-          onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
-          onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-        >
-          Explorar Tienda
-        </button>
+        <HeroSliderBackground />
+        
+        {/* Contenido sobre el fondo animado */}
+        <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {/* Textos ocultos para SEO, ya que el logo incluye el texto en la primera imagen */}
+          <h1 style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', border: 0 }}>
+            Luna Teia Cosméticos
+          </h1>
+          <p style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', border: 0 }}>
+            Descubre nuestra colección exclusiva de cosméticos diseñados para resaltar tu belleza única en cada ocasión.
+          </p>
+          <button
+            onClick={() => document.getElementById('categorias')?.scrollIntoView({ behavior: 'smooth' })}
+            style={{ backgroundColor: '#E53935', color: 'white', padding: '1rem 2.5rem', fontSize: '1.1rem', fontWeight: 'bold', borderRadius: '9999px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 15px rgba(229, 57, 53, 0.4)', transition: 'transform 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            Explorar Tienda
+          </button>
+        </div>
       </section>
 
       {/* ── GRID DE CATEGORÍAS ── */}
@@ -72,7 +77,6 @@ export default function Home() {
                 )}
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)' }} />
                 <div style={{ position: 'absolute', bottom: '2rem', left: '2rem', color: '#FFF' }}>
-                  <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>{cat.icon}</span>
                   <h3 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0 }}>{cat.title}</h3>
                   <span style={{ fontSize: '0.9rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px', color: '#ffcdd2', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
                     Ver productos →
@@ -83,6 +87,10 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ── SECCIÓN DE RESEÑAS DE FACEBOOK ── */}
+      <FacebookReviews />
+
     </main>
   );
 }

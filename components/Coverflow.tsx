@@ -146,28 +146,35 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
             <div
               key={product.id}
               onClick={() => {
-                if (isCenter && onProductClick) onProductClick(product);
-                else setActiveIndex(index);
-              }}
+                  if (onProductClick) onProductClick(product);
+                  else setActiveIndex(index);
+                }}
               style={{
                 position: 'absolute',
-                width: '120px',
-                height: '120px',
-                borderRadius: '50%',
-                backgroundColor: '#FFF',
-                backgroundImage: `url(${product.imageUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                boxShadow: isCenter ? `0 12px 24px ${product.colorHex}44, 0 4px 8px rgba(0,0,0,0.1)` : '0 3px 8px rgba(0,0,0,0.06)',
-                border: isCenter ? `3px solid ${product.colorHex}` : '1px solid #EEE',
                 transform: `translateX(${translateX}px) scale(${scale})`,
-                filter: blur > 0 ? `blur(${blur}px)` : 'none',
                 zIndex,
                 opacity,
                 transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
                 cursor: 'pointer'
               }}
-            />
+            >
+              <div 
+                className="bubble-fx"
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  borderRadius: '50%',
+                  backgroundColor: '#FFF',
+                  backgroundImage: `url(${product.imageUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  boxShadow: isCenter ? `0 12px 24px ${product.colorHex}44, 0 4px 8px rgba(0,0,0,0.1)` : '0 3px 8px rgba(0,0,0,0.06)',
+                  border: isCenter ? `3px solid ${product.colorHex}` : '1px solid #EEE',
+                  filter: blur > 0 ? `blur(${blur}px)` : 'none',
+                  transition: 'transform 0.4s ease-out, box-shadow 0.4s ease-out, filter 0.4s ease-out'
+                }}
+              />
+            </div>
           );
         })}
         
@@ -218,6 +225,15 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        .bubble-fx:hover {
+          transform: scale(1.03);
+          box-shadow: 0 8px 20px rgba(0,0,0,0.1), 0 0 15px rgba(255,255,255,0.4) !important;
+          filter: brightness(1.04) !important;
+        }
+        .bubble-fx:active {
+          transform: scale(0.92);
+          box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
         }
       `}} />
     </div>

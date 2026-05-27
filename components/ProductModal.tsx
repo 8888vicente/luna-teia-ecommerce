@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useCart, Product } from '../context/CartContext';
 
 interface ProductModalProps {
@@ -46,6 +46,10 @@ const DESCRIPTIONS: Record<string, string> = {
   'Blackberry':   'El más oscuro y audaz de la colección. Con pigmentos botánicos de zarzamora y aceite de semilla de uva, cuida tus labios con un color que habla solo.',
   'Purpura':      'Púrpura mágico de inspiración floral. Con extracto de lavanda y aceite de flor de loto, este tono único lleva aromaterapia natural directo a tus labios.',
   'Piñon':        'Nude avellana inspirado en el bosque. Con aceite de piñón real y extracto de cedro, este tono terroso cálido es la sofisticación natural hecha labial.',
+  'Sombra Ceja Clara':  'Polvo compacto de definición suave, ideal para cejas con acabado natural y ligero. Da volumen y forma sin endurecer el trazo, con una textura aterciopelada que se difumina fácilmente.',
+  'Sombra Ceja Media':  'Tono medio versátil para cejas bien definidas. Su fórmula mate se integra con el vello y la piel, ofreciendo un acabado impecable para un arco pulido y con movimiento.',
+  'Sombra Ceja Negra':  'Tono profundo para mayor intensidad en cejas marcadas. Ideal para perfiles más oscuros o looks dramáticos, aporta definición precisa y un color uniforme de larga duración.',
+  'Sombra Ceja Obscura': 'Color oscuro para cejas de presencia. Su fórmula resistente controla el brillo y fija el maquillaje sin opacar, entregando un acabado elegante y con un efecto natural.',
 };
 
 const DEFAULT_DESC = 'Formulado con ingredientes 100% naturales y aceites botánicos, este labial de la colección Mia Terra cuida y embellece tus labios. Sin parabenos, sin crueldad animal y con compromiso sustentable.';
@@ -59,6 +63,11 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
+
+  const historyClosing = useRef(false);
+  const historyPushed = useRef(false);
+  // Nota: se eliminó la manipulación directa del historial para evitar
+  // que navegaciones/rehidrataciones cierren el modal automáticamente.
 
   const description = DESCRIPTIONS[product.name] ?? DEFAULT_DESC;
 

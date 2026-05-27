@@ -24,6 +24,7 @@ type CartContextType = {
   totalItems: number;
   subtotal: number;
   shippingCost: number;
+  isCartHighlighted: boolean;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -31,6 +32,8 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCartHighlighted, setIsCartHighlighted] = useState(false);
+  const highlightTimeout = React.useRef<number | null>(null);
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
@@ -45,7 +48,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...currentItems, { ...product, quantity: 1 }];
     });
-    openCart();
+
+    setIsCartHighlighted(true);
+    if (highlightTimeout.current) {
+      window.clearTimeout(highlightTimeout.current);
+    }
+    highlightTimeout.current = window.setTimeout(() => {
+      setIsCartHighlighted(false);
+      highlightTimeout.current = null;
+    }, 1200);
   };
 
   const removeItem = (productId: string) => {
@@ -64,7 +75,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <CartContext.Provider value={{ items, isCartOpen, openCart, closeCart, addItem, removeItem, totalItems, subtotal, shippingCost }}>
+    <CartContext.Provider value={{ items, isCartOpen, openCart, closeCart, addItem, removeItem, totalItems, subtotal, shippingCost, isCartHighlighted }}>
       {children}
     </CartContext.Provider>
   );

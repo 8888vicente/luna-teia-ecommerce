@@ -36,9 +36,9 @@ const CrossfadingQuadrant = ({ images, delay }: { images: string[], delay: numbe
 export default function CollageCardBackground() {
   // Dividimos 16 tonos en 4 grupos para los 4 cuadrantes
   const group1 = ['/Pasion.jpg', '/Rose.jpg', '/Moka.jpg', '/Coral.jpg'];
-  const group2 = ['/Rosa Mx.jpg', '/Nature.jpg', '/Fiusha.jpg', '/Terra.jpg'];
+  const group2 = ['/Rosa_Mx.jpg', '/Nature.jpg', '/Fiusha.jpg', '/Terra.jpg'];
   const group3 = ['/Chocolate.jpg', '/Cereza.jpg', '/Secret.jpg', '/Tangerin.jpg'];
-  const group4 = ['/Palo Rosa.jpg', '/Marte.jpg', '/Moon.jpg', '/Expresso.jpg'];
+  const group4 = ['/Palo_Rosa.jpg', '/Marte.jpg', '/Moon.jpg', '/Expresso.jpg'];
 
   return (
     <div style={{ 

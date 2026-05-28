@@ -10,6 +10,12 @@ export const metadata = {
   description: "Tienda en línea de cosméticos, labiales y más. Envío a todo México.",
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -20,7 +26,7 @@ export default function RootLayout({
       <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <CartProvider>
           {/* Announcement Bar Pequeña */}
-          <div style={{ backgroundColor: '#212121', color: 'white', textAlign: 'center', padding: '0.25rem', fontSize: '0.8rem', fontWeight: 'bold' }}>
+          <div style={{ backgroundColor: '#212121', color: 'white', textAlign: 'center', padding: '0.25rem', fontSize: 'clamp(0.65rem, 1.5vw, 0.8rem)', fontWeight: 'bold' }}>
             🎉 ENVÍO GRATIS a partir de $500 MXN | Envío especial a $50 en compras de $200 a $499
           </div>
           {/* Banner MSI deslizante */}

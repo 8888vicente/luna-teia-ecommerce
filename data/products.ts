@@ -1,4 +1,4 @@
-export type ProductFamily = 'Rojos' | 'Rosas' | 'Varios';
+export type ProductFamily = 'Rojos' | 'Rosas' | 'Varios' | string;
 
 export interface Product {
   id: string;
@@ -8,7 +8,9 @@ export interface Product {
   price: number;
   colorHex: string;
   imageUrl: string;
+  stock?: number;  // piezas disponibles (viene de Supabase)
 }
+
 
 export const FAMILIES: ProductFamily[] = ['Rojos', 'Rosas', 'Varios'];
 

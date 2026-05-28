@@ -12,10 +12,25 @@ interface CoverflowProps {
 export default function Coverflow({ products, families, onProductClick }: CoverflowProps) {
   const [activeFamilyIndex, setActiveFamilyIndex] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
-  const { addItem } = useCart();
+  const [isMobile, setIsMobile] = useState(false);
+  const { addItem, items } = useCart();
+
+  // Detectar mobile
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const activeFamily = families[activeFamilyIndex];
   const familyProducts = products.filter(p => p.family === activeFamily);
+
+  // Tamaños adaptables
+  const bubbleSize = isMobile ? 72 : 120;
+  const containerHeight = isMobile ? 110 : 170;
+  const stepPx = isMobile ? 50 : 72;
+  const centerScale = isMobile ? 1.15 : 1.22;
 
   // Reset horizontal index when changing family
   useEffect(() => {
@@ -39,10 +54,8 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
   };
 
   const activeProduct = familyProducts[activeIndex];
-
-  // Prevent default scroll when hovering the coverflow
-  // Se eliminó el cambio de familia con scroll del mouse a petición del usuario.
-  // El usuario ahora usará los botones de categoría.
+  const activeCartQuantity = items.find(item => item.id === activeProduct?.id)?.quantity ?? 0;
+  const isActiveSoldOut = activeProduct?.stock !== undefined && activeCartQuantity >= activeProduct.stock;
 
   // Gestos táctiles (Swipe)
   const touchStart = useRef({ x: 0, y: 0 });
@@ -58,9 +71,7 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
     const touchEndX = e.changedTouches[0].clientX;
     const diffX = touchStart.current.x - touchEndX;
     
-    // Deslizar izquierda -> siguiente
     if (diffX > 50) handleNext();
-    // Deslizar derecha -> anterior
     else if (diffX < -50) handlePrev();
   };
 
@@ -80,16 +91,16 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
         overflow: 'hidden'
       }}
     >
-      {/* Category Tabs (Resaltados) */}
+      {/* Category Tabs */}
       {families.length > 1 && (
-        <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', overflowX: 'auto', padding: '0.5rem', backgroundColor: '#FFF', borderRadius: '9999px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', zIndex: 10 }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', overflowX: 'auto', padding: '0.4rem', backgroundColor: '#FFF', borderRadius: '9999px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', zIndex: 10, maxWidth: '95vw' }}>
           {families.map((family, idx) => (
             <button
               key={family}
               onClick={() => setActiveFamilyIndex(idx)}
               style={{
-                padding: '0.6rem 1.5rem',
-                fontSize: '0.95rem',
+                padding: isMobile ? '0.4rem 1rem' : '0.6rem 1.5rem',
+                fontSize: isMobile ? '0.75rem' : '0.95rem',
                 borderRadius: '9999px',
                 fontWeight: '900',
                 border: 'none',
@@ -99,47 +110,38 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
                 transition: 'all 0.3s ease',
                 boxShadow: activeFamilyIndex === idx ? '0 4px 10px rgba(229,57,53,0.3)' : 'none',
                 letterSpacing: '0.5px',
-                textTransform: 'uppercase'
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap'
               }}
             >
-              {family.toUpperCase()}
+              {isMobile ? family.substring(0, 6) : family.toUpperCase()}
             </button>
           ))}
         </div>
-      )}
-
-      {/* Up Arrow (Solo si hay más de 1 familia) */}
-      {families.length > 1 && (
-        <button onClick={handleUp} style={{ marginBottom: '0.25rem', background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#B0BEC5' }}>▲</button>
       )}
 
       {/* Coverflow */}
       <div style={{
         position: 'relative',
         width: '100%',
-        height: '170px',
+        height: `${containerHeight}px`,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        perspective: '900px'
+        perspective: isMobile ? '600px' : '900px'
       }}>
         {familyProducts.map((product, index) => {
           let diff = index - activeIndex;
           if (diff < -Math.floor(familyProducts.length / 2)) diff += familyProducts.length;
           if (diff > Math.floor(familyProducts.length / 2)) diff -= familyProducts.length;
 
-          // Solo renderizar hasta 6 a cada lado
           if (Math.abs(diff) > 6) return null;
 
           const isCenter = diff === 0;
-          // Separación de 72px por paso → 6 pasos = 432px a cada lado
-          const translateX = diff * 72;
-          // Escala: baja 6% por paso. diff=1→0.94, diff=5→0.70
-          const scale = isCenter ? 1.22 : Math.max(0.58, 1 - Math.abs(diff) * 0.062);
+          const translateX = diff * stepPx;
+          const scale = isCenter ? centerScale : Math.max(0.58, 1 - Math.abs(diff) * 0.062);
           const zIndex = 100 - Math.abs(diff);
-          // Opacidad suave: diff=1→86%, diff=5→43% (misma curva que el banner)
           const opacity = isCenter ? 1 : Math.max(0.36, 1 - Math.abs(diff) * 0.115);
-          // Blur: empieza en diff=2, muy ligero
           const blur = isCenter ? 0 : Math.max(0, (Math.abs(diff) - 1) * 0.4);
 
           return (
@@ -161,8 +163,8 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
               <div 
                 className="bubble-fx"
                 style={{
-                  width: '120px',
-                  height: '120px',
+                  width: `${bubbleSize}px`,
+                  height: `${bubbleSize}px`,
                   borderRadius: '50%',
                   backgroundColor: '#FFF',
                   backgroundImage: `url(${product.imageUrl})`,
@@ -179,46 +181,75 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
         })}
         
         {/* Navigation Arrows */}
-        <button onClick={handlePrev} style={{ position: 'absolute', left: '10%', zIndex: 200, fontSize: '1.2rem', color: '#212121', background: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>&lt;</button>
-        <button onClick={handleNext} style={{ position: 'absolute', right: '10%', zIndex: 200, fontSize: '1.2rem', color: '#212121', background: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>&gt;</button>
+        <button onClick={handlePrev} style={{ 
+          position: 'absolute', 
+          left: isMobile ? '5%' : '10%', 
+          zIndex: 200, 
+          fontSize: isMobile ? '1rem' : '1.2rem', 
+          color: '#212121', 
+          background: 'rgba(255,255,255,0.8)', 
+          border: 'none', 
+          borderRadius: '50%', 
+          width: isMobile ? '26px' : '30px', 
+          height: isMobile ? '26px' : '30px', 
+          cursor: 'pointer', 
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>&lt;</button>
+        <button onClick={handleNext} style={{ 
+          position: 'absolute', 
+          right: isMobile ? '5%' : '10%', 
+          zIndex: 200, 
+          fontSize: isMobile ? '1rem' : '1.2rem', 
+          color: '#212121', 
+          background: 'rgba(255,255,255,0.8)', 
+          border: 'none', 
+          borderRadius: '50%', 
+          width: isMobile ? '26px' : '30px', 
+          height: isMobile ? '26px' : '30px', 
+          cursor: 'pointer', 
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>&gt;</button>
       </div>
 
-      {/* Down Arrow (Solo si hay más de 1 familia) */}
-      {families.length > 1 && (
-        <button onClick={handleDown} style={{ marginTop: '0.25rem', background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#B0BEC5' }}>▼</button>
-      )}
-
-      <div style={{ textAlign: 'center', marginTop: '0.5rem', animation: 'fadeIn 0.5s ease-in' }}>
-        <h2 style={{ fontSize: '1.3rem', fontWeight: '800', color: '#212121', marginBottom: '0.25rem' }}>{activeProduct.name}</h2>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-           <div style={{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: activeProduct.colorHex, border: '1px solid #ccc' }} />
+      <div style={{ textAlign: 'center', marginTop: '0.5rem', animation: 'fadeIn 0.5s ease-in', padding: '0 1rem' }}>
+        <h2 style={{ fontSize: isMobile ? '1.1rem' : '1.3rem', fontWeight: '800', color: '#212121', marginBottom: '0.25rem' }}>{activeProduct.name}</h2>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+           <div style={{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: activeProduct.colorHex, border: '1px solid #ccc', flexShrink: 0 }} />
            <span style={{ fontSize: '0.9rem', color: '#757575', fontWeight: 'bold' }}>{activeProduct.category}</span>
            <span style={{ fontSize: '1.1rem', color: '#E53935', fontWeight: 'bold' }}>${activeProduct.price} MXN</span>
         </div>
         
         <button
           onClick={() => addItem(activeProduct)}
+          disabled={isActiveSoldOut}
           style={{
-            backgroundColor: '#E53935',
+            backgroundColor: isActiveSoldOut ? '#9e9e9e' : '#E53935',
             color: 'white',
-            padding: '0.75rem 2rem', // Botón más pequeño (aprox 15-20% menos)
-            fontSize: '1rem',
+            padding: isMobile ? '0.6rem 1.5rem' : '0.75rem 2rem',
+            fontSize: isMobile ? '0.85rem' : '1rem',
             fontWeight: 'bold',
             borderRadius: '9999px',
             border: 'none',
-            boxShadow: '0 4px 10px rgba(229, 57, 53, 0.3)',
+            boxShadow: isActiveSoldOut ? 'none' : '0 4px 10px rgba(229, 57, 53, 0.3)',
             transition: 'transform 0.1s ease',
-            cursor: 'pointer',
+            cursor: isActiveSoldOut ? 'not-allowed' : 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            margin: '0 auto'
+            margin: '0 auto',
+            opacity: isActiveSoldOut ? 0.7 : 1,
           }}
-          onMouseDown={e => e.currentTarget.style.transform = 'scale(0.95)'}
-          onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-          onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+          onMouseDown={e => { if (!isActiveSoldOut) e.currentTarget.style.transform = 'scale(0.95)'; }}
+          onMouseUp={e => { if (!isActiveSoldOut) e.currentTarget.style.transform = 'scale(1)'; }}
+          onMouseLeave={e => { if (!isActiveSoldOut) e.currentTarget.style.transform = 'scale(1)'; }}
         >
-          <span>[ + ]</span> AGREGAR AL CARRITO
+          <span>[ + ]</span> {isActiveSoldOut ? 'AGOTADO' : 'AGREGAR'}
         </button>
       </div>
       <style dangerouslySetInnerHTML={{__html: `
@@ -226,14 +257,8 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        .bubble-fx:hover {
-          transform: scale(1.03);
-          box-shadow: 0 8px 20px rgba(0,0,0,0.1), 0 0 15px rgba(255,255,255,0.4) !important;
-          filter: brightness(1.04) !important;
-        }
         .bubble-fx:active {
-          transform: scale(0.92);
-          box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+          transform: scale(0.92) !important;
         }
       `}} />
     </div>

@@ -1,16 +1,38 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import styles from './page.module.css';
 
 export default function CheckoutPage() {
   const { items, subtotal, shippingCost } = useCart();
+  const [isPaying, setIsPaying] = useState(false);
   const total = subtotal + shippingCost;
 
-  const handlePayment = (e: React.FormEvent) => {
+  const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Simulación: Redirigiendo a Mercado Pago para cobrar $' + total + ' MXN');
+    if (items.length === 0) return;
+
+    setIsPaying(true);
+    try {
+      const response = await fetch('/api/payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: items.map(item => ({ id: item.id, quantity: item.quantity })) }),
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        alert(data?.message ?? 'No se pudo procesar el pago. Por favor intenta de nuevo.');
+        setIsPaying(false);
+        return;
+      }
+
+      window.location.href = data.init_point;
+    } catch (error) {
+      alert('Ocurrió un error al procesar el pago. Intenta más tarde.');
+      setIsPaying(false);
+    }
   };
 
   if (items.length === 0) {

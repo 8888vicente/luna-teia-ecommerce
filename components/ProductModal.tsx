@@ -55,7 +55,10 @@ const DESCRIPTIONS: Record<string, string> = {
 const DEFAULT_DESC = 'Formulado con ingredientes 100% naturales y aceites botánicos, este labial de la colección Mia Terra cuida y embellece tus labios. Sin parabenos, sin crueldad animal y con compromiso sustentable.';
 
 export default function ProductModal({ product, onClose }: ProductModalProps) {
-  const { addItem } = useCart();
+  const { items, addItem } = useCart();
+  const cartQuantity = items.find(item => item.id === product.id)?.quantity ?? 0;
+  const availableQuantity = product.stock !== undefined ? Math.max(0, product.stock - cartQuantity) : undefined;
+  const isSoldOut = availableQuantity !== undefined && availableQuantity <= 0;
 
   // Cerrar con Escape
   useEffect(() => {
@@ -198,25 +201,27 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
           {/* Botón Agregar */}
           <button
             onClick={() => { addItem(product); onClose(); }}
+            disabled={isSoldOut}
             style={{
               width: '100%',
               padding: '0.8rem',
-              backgroundColor: '#E53935',
+              backgroundColor: isSoldOut ? '#9e9e9e' : '#E53935',
               color: 'white',
               border: 'none',
               borderRadius: '12px',
               fontSize: '0.95rem',
               fontWeight: '800',
-              cursor: 'pointer',
+              cursor: isSoldOut ? 'not-allowed' : 'pointer',
               letterSpacing: '1px',
-              boxShadow: '0 4px 14px rgba(229,57,53,0.35)',
+              boxShadow: isSoldOut ? 'none' : '0 4px 14px rgba(229,57,53,0.35)',
               transition: 'transform 0.1s ease',
-              marginTop: '0.25rem'
+              marginTop: '0.25rem',
+              opacity: isSoldOut ? 0.7 : 1,
             }}
-            onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
-            onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+              onMouseDown={e => { if (!isSoldOut) e.currentTarget.style.transform = 'scale(0.98)'; }}
+              onMouseUp={e => { if (!isSoldOut) e.currentTarget.style.transform = 'scale(1)'; }}
           >
-            [ + ] AGREGAR AL CARRITO
+              [ + ] {isSoldOut ? 'AGOTADO' : 'AGREGAR AL CARRITO'}
           </button>
         </div>
       </div>

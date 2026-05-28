@@ -13,7 +13,7 @@ export default function Navbar() {
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
-        padding: '1rem 2rem', 
+        padding: '0.75rem 1rem', 
         backgroundColor: '#FFFFFF', 
         boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
         position: 'sticky',
@@ -24,13 +24,32 @@ export default function Navbar() {
           <img 
             src="/logo1.jpeg" 
             alt="Luna Teia Cosméticos" 
-            style={{ height: '45px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
+            style={{ height: 'clamp(35px, 5vw, 45px)', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
           />
         </Link>
         
-        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-          <Link href="/" style={{ fontWeight: '500', color: '#212121' }}>Inicio</Link>
-          <button onClick={openCart} className={isCartHighlighted ? 'cart-button highlighted' : 'cart-button'}>
+        <div style={{ display: 'flex', gap: 'clamp(0.5rem, 2vw, 1.5rem)', alignItems: 'center' }}>
+          <Link href="/" style={{ fontWeight: '500', color: '#212121', fontSize: 'clamp(0.8rem, 2vw, 1rem)' }}>Inicio</Link>
+          <button onClick={openCart} className={isCartHighlighted ? 'cart-button highlighted' : 'cart-button'} style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.3rem',
+            backgroundColor: isCartHighlighted ? '#E53935' : '#212121',
+            padding: 'clamp(0.4rem, 1.5vw, 0.75rem) clamp(0.6rem, 2vw, 1.25rem)',
+            borderRadius: '9999px',
+            fontWeight: 'bold',
+            fontSize: 'clamp(0.7rem, 1.5vw, 0.9rem)',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: isCartHighlighted ? '0 0 0 4px rgba(229,83,83,0.25), 0 6px 20px rgba(0,0,0,0.15)' : '0 4px 20px rgba(0,0,0,0.1)',
+            transform: isCartHighlighted ? 'scale(1.04)' : 'scale(1)',
+            transition: 'all 0.25s ease',
+            overflow: 'visible',
+            zIndex: 1,
+          }}>
             {isCartHighlighted && (
               <span className="fireworks">
                 <span className="spark spark-1" />
@@ -39,35 +58,11 @@ export default function Navbar() {
                 <span className="spark spark-4" />
               </span>
             )}
-            🛒 Carrito ({totalItems})
+            🛒 {totalItems}
           </button>
         </div>
       </nav>
       <style dangerouslySetInnerHTML={{__html: `
-        .cart-button {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          background-color: #212121;
-          padding: 0.75rem 1.25rem;
-          border-radius: 9999px;
-          font-weight: bold;
-          color: white;
-          border: none;
-          cursor: pointer;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-          transform: scale(1);
-          transition: all 0.25s ease;
-          overflow: visible;
-          z-index: 1;
-        }
-        .cart-button.highlighted {
-          background-color: #E53935;
-          box-shadow: 0 0 0 4px rgba(229,83,83,0.25), 0 6px 20px rgba(0,0,0,0.15);
-          transform: scale(1.04);
-        }
         .fireworks {
           position: absolute;
           width: 100%;

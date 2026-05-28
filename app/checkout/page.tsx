@@ -28,7 +28,21 @@ export default function CheckoutPage() {
         return;
       }
 
-      window.location.href = data.init_point;
+      // Prefer sandbox_init_point when está disponible (pruebas)
+      const url = data.sandbox_init_point ?? data.init_point;
+      if (!url) {
+        alert('No se obtuvo una URL de pago. Intenta nuevamente.');
+        setIsPaying(false);
+        return;
+      }
+
+      // Abrir en ventana flotante (popup)
+      const width = 900;
+      const height = 700;
+      const left = window.screenX + (window.innerWidth - width) / 2;
+      const top = window.screenY + (window.innerHeight - height) / 2;
+      window.open(url, 'mercadopago_checkout', `width=${width},height=${height},left=${left},top=${top}`);
+      setIsPaying(false);
     } catch (error) {
       alert('Ocurrió un error al procesar el pago. Intenta más tarde.');
       setIsPaying(false);

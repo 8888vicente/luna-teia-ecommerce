@@ -7,25 +7,31 @@ const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN!,
 });
 
+/** Costo de envío fijo para compras reales */
+const SHIPPING_COST = 150;
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const rawItems: { id: string; name: string; price: number; quantity: number }[] = Array.isArray(body?.items) ? body.items : [];
     const shippingInfo = body?.shipping_info || {};
 
-    // Calcular subtotal real desde los items recibidos
-    const subtotal = rawItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-    // Excepción: si el subtotal es exactamente $1, forzar envío gratis
-    const isTestMode = subtotal === 1;
-    const total = isTestMode ? 1 : (Number(body?.total) || subtotal);
-
-    if (isTestMode) {
-      console.log('🧪 MODO PRUEBA $1 detectado — envío forzado a $0');
-    }
-
     if (rawItems.length === 0) {
       return NextResponse.json({ success: false, message: 'No se recibieron productos para la compra.' }, { status: 400 });
+    }
+
+    // Calcular subtotal
+    const subtotal = rawItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    // ── REGLA DE ENVÍO ──────────────────────────────────────
+    // Si subtotal es exactamente $11 → envío gratis (prueba controlada)
+    // Para cualquier otro monto → se cobra envío de $150
+    const isTestMode = subtotal === 11;
+    const shippingCost = isTestMode ? 0 : SHIPPING_COST;
+    const total = subtotal + shippingCost;
+
+    if (isTestMode) {
+      console.log('🧪 MODO PRUEBA $11 detectado — envío forzado a $0, total = $11');
     }
 
     // Validar datos de envío
@@ -50,7 +56,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // 1️⃣ PRIMERO: Guardar la orden en Supabase y obtener su ID
+    // ── 1️⃣ GUARDAR ORDEN EN SUPABASE ──────────────────────
     const { data: orderData, error: orderError } = await supabase
       .from('orders')
       .insert({
@@ -72,22 +78,37 @@ export async function POST(request: Request) {
 
     if (orderError || !orderData?.id) {
       console.error('Error guardando orden en Supabase:', orderError?.message || 'No se obtuvo ID');
-      return NextResponse.json({ success: false, message: 'Error al guardar la orden. No se puede continuar con el pago.' }, { status: 500 });
+      return NextResponse.json({ success: false, message: 'Error al guardar la orden.' }, { status: 500 });
     }
 
     const orderId = orderData.id;
-    console.log(`✅ Orden ${orderId} guardada en Supabase — procediendo a Mercado Pago`);
-    // 2️⃣ SOLO si la orden se guardó: crear preferencia en Mercado Pago
+    console.log(`✅ Orden ${orderId} guardada — subtotal=$ ${subtotal} envío=$ ${shippingCost} total=$ ${total}`);
+
+    // ── 2️⃣ CREAR PREFERENCIA EN MERCADO PAGO ──────────────
+    // Items de productos
+    const mpItems = rawItems.map(item => ({
+      id: item.id,
+      title: item.name,
+      quantity: item.quantity,
+      unit_price: item.price,
+      currency_id: 'MXN',
+    }));
+
+    // Agregar el costo de envío como un ítem más (solo si aplica)
+    if (shippingCost > 0) {
+      mpItems.push({
+        id: 'shipping',
+        title: 'Costo de Envío (Paquetería Nacional)',
+        quantity: 1,
+        unit_price: shippingCost,
+        currency_id: 'MXN',
+      });
+    }
+
     const preference = new Preference(client);
     const mpResponse = await preference.create({
       body: {
-        items: rawItems.map(item => ({
-          id: item.id,
-          title: item.name,
-          quantity: item.quantity,
-          unit_price: item.price,
-          currency_id: 'MXN',
-        })),
+        items: mpItems,
         payer: {
           name: shippingInfo.name,
           email: shippingInfo.email,
@@ -105,12 +126,11 @@ export async function POST(request: Request) {
     });
 
     if (!mpResponse?.init_point) {
-      // La orden ya se guardó como 'pending' — NO descuentes stock
       console.error('❌ MP falló, orden', orderId, 'queda como pending (stock intacto)');
       return NextResponse.json({ success: false, message: 'Error al crear la preferencia de pago.' }, { status: 500 });
     }
 
-    // 3️⃣ Solo descontar stock si la preferencia se creó exitosamente
+    // ── 3️⃣ DESCONTAR STOCK (solo si MP respondió) ─────────
     for (const item of rawItems) {
       const success = await decrementStock(item.id, item.quantity);
       if (!success) {
@@ -118,11 +138,10 @@ export async function POST(request: Request) {
       }
     }
 
-    console.log(`🎉 Orden ${orderId} → init_point generado, stock descontado`);
+    console.log(`🎉 Orden ${orderId} → init_point OK, stock descontado`);
     return NextResponse.json({ success: true, init_point: mpResponse.init_point, order_id: orderId });
   } catch (error) {
     console.error('Error en payment:', error);
     return NextResponse.json({ success: false, message: 'Error inicializando pago' }, { status: 500 });
   }
 }
-

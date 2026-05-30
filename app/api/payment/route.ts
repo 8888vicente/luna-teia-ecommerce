@@ -50,8 +50,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // Guardar la orden en Supabase ANTES de descontar stock
-    const { error: orderError } = await supabase
+    // 1️⃣ PRIMERO: Guardar la orden en Supabase y obtener su ID
+    const { data: orderData, error: orderError } = await supabase
       .from('orders')
       .insert({
         items: rawItems.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
@@ -66,14 +66,18 @@ export async function POST(request: Request) {
         address_references:    shippingInfo.references || '',
         total: total,
         status: 'pending',
-      });
+      })
+      .select('id')
+      .single();
 
-    if (orderError) {
-      console.error('Error guardando orden:', orderError.message);
-      return NextResponse.json({ success: false, message: 'Error al guardar la orden. Intenta de nuevo.' }, { status: 500 });
+    if (orderError || !orderData?.id) {
+      console.error('Error guardando orden en Supabase:', orderError?.message || 'No se obtuvo ID');
+      return NextResponse.json({ success: false, message: 'Error al guardar la orden. No se puede continuar con el pago.' }, { status: 500 });
     }
 
-    // Crear preferencia en Mercado Pago
+    const orderId = orderData.id;
+    console.log(`✅ Orden ${orderId} guardada en Supabase — procediendo a Mercado Pago`);
+    // 2️⃣ SOLO si la orden se guardó: crear preferencia en Mercado Pago
     const preference = new Preference(client);
     const mpResponse = await preference.create({
       body: {
@@ -96,23 +100,26 @@ export async function POST(request: Request) {
         },
         auto_return: 'approved',
         notification_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://tudominio.com'}/api/webhooks/mercadopago`,
+        external_reference: orderId,
       },
     });
 
     if (!mpResponse?.init_point) {
-      console.error('Error creating Mercado Pago preference:', mpResponse);
+      // La orden ya se guardó como 'pending' — NO descuentes stock
+      console.error('❌ MP falló, orden', orderId, 'queda como pending (stock intacto)');
       return NextResponse.json({ success: false, message: 'Error al crear la preferencia de pago.' }, { status: 500 });
     }
 
-    // Descontar stock
+    // 3️⃣ Solo descontar stock si la preferencia se creó exitosamente
     for (const item of rawItems) {
       const success = await decrementStock(item.id, item.quantity);
       if (!success) {
-        console.error(`Error descontando stock de ${item.id}`);
+        console.error(`⚠️ Error descontando stock de ${item.id} — orden ${orderId}`);
       }
     }
 
-    return NextResponse.json({ success: true, init_point: mpResponse.init_point });
+    console.log(`🎉 Orden ${orderId} → init_point generado, stock descontado`);
+    return NextResponse.json({ success: true, init_point: mpResponse.init_point, order_id: orderId });
   } catch (error) {
     console.error('Error en payment:', error);
     return NextResponse.json({ success: false, message: 'Error inicializando pago' }, { status: 500 });

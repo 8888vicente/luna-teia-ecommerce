@@ -18,7 +18,9 @@ export default function CheckoutPage() {
     zip: '',
   });
 
-  const total = subtotal + shippingCost;
+  const isTestMode = subtotal === 1;
+  const effectiveShipping = isTestMode ? 0 : shippingCost;
+  const total = subtotal + effectiveShipping;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -50,7 +52,7 @@ export default function CheckoutPage() {
             quantity: item.quantity,
           })),
           shipping_info: formData,
-          total: total,
+          total: isTestMode ? 1 : total,
         }),
       });
       const data = await response.json();
@@ -197,7 +199,7 @@ export default function CheckoutPage() {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', color: '#757575' }}>
           <span>Envío (Paquetería Nacional)</span>
-          <span>${shippingCost}</span>
+          <span>{isTestMode ? '🚚 GRATIS (Prueba)' : `$${shippingCost}`}</span>
         </div>
         <div style={{ borderTop: '2px solid #212121', paddingTop: '1rem', marginTop: '1rem', display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.2rem' }}>
           <span>Total</span>

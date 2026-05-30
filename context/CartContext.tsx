@@ -67,13 +67,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  // Lógica de envío de Luna Teia (Basada en Subtotal)
-  let shippingCost = 150; // Tarifa base (< $200)
-  if (subtotal >= 500) {
-    shippingCost = 0; // Envío gratis a partir de $500
-  } else if (subtotal >= 200) {
-    shippingCost = 50; // Subsidiado a $50 si la compra es entre $200 y $499
-  }
+  // Lógica de envío de Luna Teia
+  // Subtotal < $15 → envío gratis
+  // Subtotal ≥ $15 → $150
+  const shippingCost = subtotal < 15 ? 0 : 150;
 
   return (
     <CartContext.Provider value={{ items, isCartOpen, openCart, closeCart, addItem, removeItem, totalItems, subtotal, shippingCost, isCartHighlighted }}>

@@ -24,15 +24,10 @@ export async function POST(request: Request) {
     const subtotal = rawItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     // ── REGLA DE ENVÍO ──────────────────────────────────────
-    // Si subtotal es exactamente $11 → envío gratis (prueba controlada)
-    // Para cualquier otro monto → se cobra envío de $150
-    const isTestMode = subtotal === 11;
-    const shippingCost = isTestMode ? 0 : SHIPPING_COST;
+    // Subtotal < $15 → envío gratis
+    // Subtotal ≥ $15 → se cobra envío de $150
+    const shippingCost = subtotal < 15 ? 0 : SHIPPING_COST;
     const total = subtotal + shippingCost;
-
-    if (isTestMode) {
-      console.log('🧪 MODO PRUEBA $11 detectado — envío forzado a $0, total = $11');
-    }
 
     // Validar datos de envío
     const requiredShipping = ['name', 'phone', 'email', 'street', 'suburb', 'city', 'state', 'zip'];

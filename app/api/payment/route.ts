@@ -1,108 +1,85 @@
 import { NextResponse } from 'next/server';
 import { getProductById, decrementStock } from '../../../lib/productService';
-import { supabase } from '../../../lib/supabase';
 
-const MP_API = 'https://api.mercadopago.com/checkout/preferences';
+import { supabase } from '../../../lib/supabase';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const items = Array.isArray(body?.items) ? body.items : [];
-    const shippingInfo = body?.shippingInfo || {};
+    const rawItems: { id: string; name: string; price: number; quantity: number }[] = Array.isArray(body?.items) ? body.items : [];
+    const shippingInfo = body?.shipping_info || {};
+    const total = Number(body?.total) || 0;
 
-    if (items.length === 0) {
+    if (rawItems.length === 0) {
       return NextResponse.json({ success: false, message: 'No se recibieron productos para la compra.' }, { status: 400 });
     }
 
-    // Validar y mapear items a formato de Mercado Pago
-    const mpItems: Array<any> = [];
-    for (const item of items) {
+    // Validar datos de envío
+    const requiredShipping = ['name', 'phone', 'email', 'street', 'suburb', 'city', 'state', 'zip'];
+    for (const field of requiredShipping) {
+      if (!shippingInfo[field]?.trim()) {
+        return NextResponse.json({ success: false, message: `Falta el campo de envío: ${field}` }, { status: 400 });
+      }
+    }
+
+    // Validar stock
+    for (const item of rawItems) {
       if (!item?.id || !Number.isInteger(item.quantity) || item.quantity <= 0) {
         return NextResponse.json({ success: false, message: 'Los datos de la orden no son válidos.' }, { status: 400 });
       }
+
       const product = await getProductById(item.id);
       if (!product) {
         return NextResponse.json({ success: false, message: `Producto no encontrado: ${item.id}` }, { status: 404 });
       }
+
       if ((product.stock ?? 0) < item.quantity) {
         return NextResponse.json({ success: false, message: `No hay suficiente stock para ${product.name}.` }, { status: 400 });
       }
+    }
 
-      mpItems.push({
-        id: product.id,
-        title: product.name,
-        quantity: item.quantity,
-        unit_price: Number(product.price),
-        currency_id: 'MXN',
+    // Guardar la orden en Supabase ANTES de descontar stock
+    const { error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        items: rawItems.map(i => ({
+          id: i.id,
+          name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+        })),
+        customer_name:         shippingInfo.name,
+        customer_phone:        shippingInfo.phone,
+        customer_email:        shippingInfo.email,
+        address_street_number: shippingInfo.street,
+        address_neighborhood:  shippingInfo.suburb,
+        address_city:          shippingInfo.city,
+        address_state:         shippingInfo.state,
+        address_postal_code:   shippingInfo.zip,
+        address_references:    shippingInfo.references || '',
+        total: total,
+        status: 'pending',
       });
+
+    if (orderError) {
+      console.error('Error guardando orden:', orderError.message);
+      return NextResponse.json({ success: false, message: 'Error al guardar la orden. Intenta de nuevo.' }, { status: 500 });
     }
 
     // Descontar stock
-    for (const item of items) {
+    for (const item of rawItems) {
       const success = await decrementStock(item.id, item.quantity);
       if (!success) {
-        return NextResponse.json({ success: false, message: 'Error actualizando el inventario. Intenta de nuevo.' }, { status: 500 });
+        console.error(`Error descontando stock de ${item.id}`);
       }
     }
 
-    // Registrar la orden en Supabase (para llevar historial)
-    const totalAmount = mpItems.reduce((sum: number, it: any) => sum + it.unit_price * it.quantity, 0);
+    const mockInitPoint = 'https://www.mercadopago.com.mx/checkout/v1/redirect?pref_id=mock-12345';
 
-    const { error: orderError } = await supabase.from('orders').insert({
-      items: mpItems.map((it: any) => ({ id: it.id, quantity: it.quantity, price: it.unit_price })),
-      total: totalAmount,
-      shipping_info: shippingInfo,
-      status: 'pending',
-      created_at: new Date().toISOString(),
-    });
-
-    if (orderError) {
-      console.error('Error registrando orden:', orderError.message);
-      // No impedimos el pago por un fallo al guardar el historial
-    }
-
-    // Crear preferencia en Mercado Pago
-    const MP_TOKEN = process.env.MERCADO_PAGO_ACCESS_TOKEN;
-    if (!MP_TOKEN) {
-      return NextResponse.json({ success: false, message: 'MERCADO_PAGO_ACCESS_TOKEN no está configurada en el servidor.' }, { status: 500 });
-    }
-
-    const preferencePayload = {
-      items: mpItems,
-      back_urls: {
-        success: '/',
-        failure: '/',
-        pending: '/',
-      },
-      auto_return: 'approved',
-      payer: {},
-    };
-
-    const resp = await fetch(MP_API, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${MP_TOKEN}`,
-      },
-      body: JSON.stringify(preferencePayload),
-    });
-
-    if (!resp.ok) {
-      const text = await resp.text();
-      console.error('MercadoPago create preference failed:', resp.status, text);
-      return NextResponse.json({ success: false, message: 'Error creando preferencia de pago.' }, { status: 500 });
-    }
-
-    const pref = await resp.json();
-
-    return NextResponse.json({
-      success: true,
-      preference_id: pref.id,
-      init_point: pref.init_point,
-      sandbox_init_point: pref.sandbox_init_point,
-    });
+    return NextResponse.json({ success: true, init_point: mockInitPoint });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error inicializando pago';
-    return NextResponse.json({ success: false, message }, { status: 500 });
+    console.error('Error en payment:', error);
+    return NextResponse.json({ success: false, message: 'Error inicializando pago' }, { status: 500 });
   }
 }
+

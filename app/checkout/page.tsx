@@ -7,18 +7,51 @@ import styles from './page.module.css';
 export default function CheckoutPage() {
   const { items, subtotal, shippingCost } = useCart();
   const [isPaying, setIsPaying] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',  // agregamos email
+    street: '',
+    suburb: '',
+    city: '',
+    state: '',
+    zip: '',
+  });
+
   const total = subtotal + shippingCost;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) return;
+
+    // Validar campos requeridos
+    const required = ['name', 'phone', 'email', 'street', 'suburb', 'city', 'state', 'zip'];
+    for (const field of required) {
+      if (!formData[field as keyof typeof formData]?.trim()) {
+        alert('Por favor completa todos los campos de envío.');
+        return;
+      }
+    }
 
     setIsPaying(true);
     try {
       const response = await fetch('/api/payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: items.map(item => ({ id: item.id, quantity: item.quantity })) }),
+        body: JSON.stringify({
+          items: items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          shipping_info: formData,
+          total: total,
+        }),
       });
       const data = await response.json();
 
@@ -28,21 +61,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Prefer sandbox_init_point when está disponible (pruebas)
-      const url = data.sandbox_init_point ?? data.init_point;
-      if (!url) {
-        alert('No se obtuvo una URL de pago. Intenta nuevamente.');
-        setIsPaying(false);
-        return;
-      }
-
-      // Abrir en ventana flotante (popup)
-      const width = 900;
-      const height = 700;
-      const left = window.screenX + (window.innerWidth - width) / 2;
-      const top = window.screenY + (window.innerHeight - height) / 2;
-      window.open(url, 'mercadopago_checkout', `width=${width},height=${height},left=${left},top=${top}`);
-      setIsPaying(false);
+      window.location.href = data.init_point;
     } catch (error) {
       alert('Ocurrió un error al procesar el pago. Intenta más tarde.');
       setIsPaying(false);
@@ -66,52 +85,54 @@ export default function CheckoutPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <div className={styles.inputGroup}>
             <label>Nombre Completo</label>
-            <input type="text" required placeholder="María Pérez" />
+            <input type="text" name="name" required placeholder="María Pérez" value={formData.name} onChange={handleChange} />
           </div>
           <div className={styles.inputGroup}>
             <label>Teléfono (10 dígitos)</label>
             <input 
-              type="tel" 
-              required 
-              placeholder="5512345678" 
-              pattern="[0-9]{10}"
-              maxLength={10}
-              minLength={10}
+              type="tel" name="phone" required placeholder="5512345678" 
+              pattern="[0-9]{10}" maxLength={10} minLength={10}
               title="El número debe tener exactamente 10 dígitos"
-              onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) e.preventDefault();
-              }}
+              value={formData.phone} onChange={handleChange}
+              onKeyPress={(e) => { if (!/[0-9]/.test(e.key)) e.preventDefault(); }}
             />
           </div>
         </div>
 
         <div className={styles.inputGroup}>
-          <label>Dirección (Calle y Número)</label>
-          <input type="text" required placeholder="Av. Siempre Viva 123" />
+          <label>Correo Electrónico</label>
+          <input type="email" name="email" required placeholder="correo@ejemplo.com" value={formData.email} onChange={handleChange} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+        <div className={styles.inputGroup}>
+          <label>Dirección (Calle y Número)</label>
+          <input type="text" name="street" required placeholder="Av. Siempre Viva 123" value={formData.street} onChange={handleChange} />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <div className={styles.inputGroup}>
             <label>Colonia</label>
-            <input type="text" required />
+            <input type="text" name="suburb" required value={formData.suburb} onChange={handleChange} />
           </div>
           <div className={styles.inputGroup}>
             <label>Ciudad</label>
-            <input type="text" required />
+            <input type="text" name="city" required value={formData.city} onChange={handleChange} />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className={styles.inputGroup}>
+            <label>Estado</label>
+            <input type="text" name="state" required placeholder="Ej. CDMX" value={formData.state} onChange={handleChange} />
           </div>
           <div className={styles.inputGroup}>
             <label>Código Postal</label>
             <input 
-              type="text" 
-              required 
-              placeholder="00000" 
-              pattern="[0-9]{5}"
-              maxLength={5}
-              minLength={5}
+              type="text" name="zip" required placeholder="00000" 
+              pattern="[0-9]{5}" maxLength={5} minLength={5}
               title="El código postal debe tener exactamente 5 dígitos"
-              onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) e.preventDefault();
-              }}
+              value={formData.zip} onChange={handleChange}
+              onKeyPress={(e) => { if (!/[0-9]/.test(e.key)) e.preventDefault(); }}
             />
           </div>
         </div>
@@ -154,8 +175,8 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        <button type="submit" className={styles.payButton}>
-          Pagar ${total} MXN
+        <button type="submit" className={styles.payButton} disabled={isPaying}>
+          {isPaying ? 'Procesando...' : `Pagar $${total} MXN`}
         </button>
       </form>
 

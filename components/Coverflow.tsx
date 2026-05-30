@@ -55,7 +55,7 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
 
   const activeProduct = familyProducts[activeIndex];
   const activeCartQuantity = items.find(item => item.id === activeProduct?.id)?.quantity ?? 0;
-  const isActiveSoldOut = activeProduct?.stock !== undefined && activeCartQuantity >= activeProduct.stock;
+  const isActiveSoldOut = activeProduct?.stock !== undefined && activeCartQuantity >= (activeProduct?.stock ?? 0);
 
   // Gestos táctiles (Swipe)
   const touchStart = useRef({ x: 0, y: 0 });

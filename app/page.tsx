@@ -39,31 +39,23 @@ export default function Home() {
         <HeroSliderBackground />
         
         <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-          <img 
-            src="/logo1.jpeg" 
-            alt="Luna Teia Cosméticos" 
-            style={{ 
-              height: 'clamp(60px, 15vw, 140px)', 
-              width: 'auto', 
-              objectFit: 'contain',
-              borderRadius: '12px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-              backgroundColor: 'rgba(255,255,255,0.95)',
-              padding: '0.4rem',
-              maxWidth: '80vw'
-            }} 
-          />
+          {/* Logo removed from hero — kept in navbar. If you want a faint logo in background instead,
+              we can set it as a background-image in HeroSliderBackground with low opacity. */}
           <h1 style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', border: 0 }}>
             Luna Teia Cosméticos
           </h1>
           <p style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', border: 0 }}>
             Descubre nuestra colección exclusiva de cosméticos diseñados para resaltar tu belleza única en cada ocasión.
           </p>
+        </div>
+
+        {/* Botón fijado al pie del hero (centrado) */}
+        <div style={{ position: 'absolute', left: '50%', bottom: 'clamp(1.5rem, 3vw, 3rem)', transform: 'translateX(-50%) translateY(0)', zIndex: 3 }}>
           <button
             onClick={() => document.getElementById('categorias')?.scrollIntoView({ behavior: 'smooth' })}
-            style={{ backgroundColor: '#E53935', color: 'white', padding: 'clamp(0.7rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem)', fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', fontWeight: 'bold', borderRadius: '9999px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 15px rgba(229, 57, 53, 0.4)', transition: 'transform 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+            style={{ backgroundColor: '#E53935', color: 'white', padding: 'clamp(0.7rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem)', fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', fontWeight: 'bold', borderRadius: '9999px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 15px rgba(229, 57, 53, 0.4)', transition: 'transform 0.2s', display: 'inline-block' }}
+            onMouseEnter={e => (e.currentTarget.style.transform = 'translateX(-50%) translateY(-3px)')}
+            onMouseLeave={e => (e.currentTarget.style.transform = 'translateX(-50%) translateY(0)')}
           >
             Explorar Tienda
           </button>

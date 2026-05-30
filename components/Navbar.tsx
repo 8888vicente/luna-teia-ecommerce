@@ -1,11 +1,16 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '../context/CartContext';
 
 export default function Navbar() {
   const { totalItems, openCart, isCartHighlighted } = useCart();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <>
@@ -58,7 +63,7 @@ export default function Navbar() {
                 <span className="spark spark-4" />
               </span>
             )}
-            🛒 {totalItems}
+            🛒 {mounted ? totalItems : ''}
           </button>
         </div>
       </nav>

@@ -40,17 +40,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const closeCart = () => setIsCartOpen(false);
 
   const addItem = (product: Product) => {
-    const currentQuantity = items.find(item => item.id === product.id)?.quantity ?? 0;
-    if (product.stock !== undefined && currentQuantity >= product.stock) {
-      console.warn('Stock máximo alcanzado para', product.name);
-      return;
-    }
-
-    if (product.stock !== undefined && product.stock <= 0) {
-      console.warn('Producto sin stock:', product.name);
-      return;
-    }
-
     setItems(currentItems => {
       const existingItem = currentItems.find(item => item.id === product.id);
       if (existingItem) {

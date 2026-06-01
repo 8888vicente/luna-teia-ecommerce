@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 export type Product = {
   id: string;
@@ -28,13 +28,39 @@ type CartContextType = {
   isCartHighlighted: boolean;
 };
 
+const CART_STORAGE_KEY = 'luna-teia-cart';
+
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCartHighlighted, setIsCartHighlighted] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const highlightTimeout = React.useRef<number | null>(null);
+
+  // Cargar carrito desde localStorage al montar
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(CART_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setItems(parsed);
+        }
+      }
+    } catch (e) {
+      console.warn('Error cargando carrito del localStorage:', e);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Guardar carrito en localStorage cada vez que cambie
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    }
+  }, [items, isLoaded]);
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
@@ -91,3 +117,4 @@ export function useCart() {
   }
   return context;
 }
+

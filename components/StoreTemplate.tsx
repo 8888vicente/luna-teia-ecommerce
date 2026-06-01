@@ -30,7 +30,22 @@ export default function StoreTemplate({ storeName, title, subtitle, gradient, na
         getProductsByStore(storeName),
         getFamiliesByStore(storeName),
       ]);
-      if (!cancel) { setProducts(prods); setFamilies(fams); setLoading(false); }
+      if (!cancel) {
+        setProducts(prods);
+        setFamilies(fams);
+        setLoading(false);
+
+        // Leer productId desde la URL para abrir modal automáticamente
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get('productId');
+        if (productId) {
+          const target = prods.find(p => p.id === productId);
+          if (target) {
+            setSelectedProduct(target);
+            setViewMode('grid');
+          }
+        }
+      }
     })();
     setTimeout(() => { if (!cancel) setLoading(false); }, 4000);
     return () => { cancel = true; };

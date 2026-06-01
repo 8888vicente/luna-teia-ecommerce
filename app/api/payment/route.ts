@@ -24,9 +24,14 @@ export async function POST(request: Request) {
     const subtotal = rawItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     // ── REGLA DE ENVÍO ──────────────────────────────────────
-    // Subtotal < $15 → envío gratis
-    // Subtotal ≥ $15 → se cobra envío de $150
-    const shippingCost = subtotal < 15 ? 0 : SHIPPING_COST;
+    let shippingCost = 150;
+    if (subtotal >= 500) {
+      shippingCost = 0;       // Gratis desde $500
+    } else if (subtotal >= 200) {
+      shippingCost = 80;      // Subsidiado entre $200 y $499
+    } else if (subtotal < 15) {
+      shippingCost = 0;       // Pruebas: gratis si < $15
+    }
     const total = subtotal + shippingCost;
 
     // Validar datos de envío

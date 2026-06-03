@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface ProductImageProps {
   src: string;
@@ -14,7 +14,37 @@ interface ProductImageProps {
 
 export default function ProductImage({ src, srcSecondary, alt, style, className, onClick, objectFit = 'cover' }: ProductImageProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showSecondary, setShowSecondary] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const hasSecondary = Boolean(srcSecondary && srcSecondary !== src);
+
+  // Detectar si es dispositivo móvil/touch
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // En móvil, alternar automáticamente entre imágenes cada 2.5 segundos
+  useEffect(() => {
+    if (!isMobile || !hasSecondary) return;
+
+    const toggleImage = () => {
+      setShowSecondary(prev => !prev);
+    };
+
+    timerRef.current = setInterval(toggleImage, 2500);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isMobile, hasSecondary]);
+
+  const showSecondaryImage = hasSecondary && (isMobile ? showSecondary : isHovered);
 
   return (
     <div
@@ -38,7 +68,7 @@ export default function ProductImage({ src, srcSecondary, alt, style, className,
           objectFit,
           display: 'block',
           transition: 'opacity 400ms ease-in-out',
-          opacity: isHovered && hasSecondary ? 0 : 1,
+          opacity: showSecondaryImage ? 0 : 1,
         }}
       />
       {hasSecondary && (
@@ -54,7 +84,7 @@ export default function ProductImage({ src, srcSecondary, alt, style, className,
             objectFit,
             display: 'block',
             transition: 'opacity 400ms ease-in-out',
-            opacity: isHovered ? 1 : 0,
+            opacity: showSecondaryImage ? 1 : 0,
           }}
         />
       )}

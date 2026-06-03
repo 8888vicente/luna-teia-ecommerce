@@ -2,24 +2,33 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 
-interface HeroSliderBackgroundProps {
-  images?: string[];
-}
+// Imágenes locales del intro (logointro.webp primero)
+const INTRO_IMAGES = [
+  '/images/intro/logointro.webp',
+  '/images/intro/pasionintro.webp',
+  '/images/intro/anisintro.webp',
+  '/images/intro/chocointro.webp',
+  '/images/intro/cocointro.webp',
+  '/images/intro/rosamxintro.webp',
+  '/images/intro/terraintro.webp',
+];
 
-export default function HeroSliderBackground({ images = [] }: HeroSliderBackgroundProps) {
+export default function HeroSliderBackground() {
+  // Siempre usar imágenes locales del intro
+  const introImages = INTRO_IMAGES;
+
   // Estabilizar la referencia: solo recalcular si la lista REAL cambia
   const prevRef = useRef<string[]>([]);
   const stableImages = (() => {
-    const incoming = images.length > 0 ? images : ['/logo2.jpeg'];
     // Comparar por valor, no por referencia
     if (
-      prevRef.current.length === incoming.length &&
-      prevRef.current.every((src, i) => src === incoming[i])
+      prevRef.current.length === introImages.length &&
+      prevRef.current.every((src, i) => src === introImages[i])
     ) {
       return prevRef.current; // misma data → misma referencia
     }
-    prevRef.current = incoming;
-    return incoming;
+    prevRef.current = introImages;
+    return introImages;
   })();
 
   const [currentIndex, setCurrentIndex] = useState(0);

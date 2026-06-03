@@ -19,10 +19,11 @@ async function getCategoryImages() {
     DEFAULT_CATEGORIES.map(async (cat) => {
       try {
         const products = await getProductsByStore(cat.id);
-        const image = products[0]?.imageUrl || 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80';
-        return { ...cat, image };
+        const images = products.map(p => p.imageUrl);
+        const image = images[0] || 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80';
+        return { ...cat, image, images };
       } catch {
-        return { ...cat, image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80' };
+        return { ...cat, image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80', images: [] };
       }
     })
   );

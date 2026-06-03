@@ -1,38 +1,60 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const IMAGES = [
-  '/logo2.jpeg',
-  '/rostro/aniscompleto.png',
-  '/rostro/cocoacompleto.png'
-];
+interface HeroSliderBackgroundProps {
+  images?: string[];
+}
 
-export default function HeroSliderBackground() {
+export default function HeroSliderBackground({ images = [] }: HeroSliderBackgroundProps) {
+  // Estabilizar la referencia: solo recalcular si la lista REAL cambia
+  const prevRef = useRef<string[]>([]);
+  const stableImages = (() => {
+    const incoming = images.length > 0 ? images : ['/logo2.jpeg'];
+    // Comparar por valor, no por referencia
+    if (
+      prevRef.current.length === incoming.length &&
+      prevRef.current.every((src, i) => src === incoming[i])
+    ) {
+      return prevRef.current; // misma data → misma referencia
+    }
+    prevRef.current = incoming;
+    return incoming;
+  })();
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState<Record<string, boolean>>({});
 
-  // Precargar imágenes
+  // Precargar imágenes — solo cuando la lista realmente cambie
   useEffect(() => {
-    IMAGES.forEach(src => {
+    let cancelled = false;
+    setImagesLoaded({});
+    stableImages.forEach(src => {
       const img = new Image();
-      img.onload = () => setImagesLoaded(prev => ({ ...prev, [src]: true }));
-      img.onerror = () => setImagesLoaded(prev => ({ ...prev, [src]: false }));
+      img.onload = () => {
+        if (!cancelled) setImagesLoaded(prev => ({ ...prev, [src]: true }));
+      };
+      img.onerror = () => {
+        if (!cancelled) setImagesLoaded(prev => ({ ...prev, [src]: false }));
+      };
       img.src = src;
     });
-  }, []);
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stableImages]);
 
   // Cambiar slide automáticamente cada 5 segundos
   useEffect(() => {
+    if (stableImages.length <= 1) return;
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % IMAGES.length);
+      setCurrentIndex(prev => (prev + 1) % stableImages.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [stableImages.length]);
 
   return (
     <>
-      {IMAGES.map((src, index) => (
+      {stableImages.map((src, index) => (
         <div
           key={src}
           style={{

@@ -5,6 +5,7 @@ import { Product, useCart } from '../context/CartContext';
 import { getProductsByStore, getFamiliesByStore } from '../lib/productService';
 import Coverflow from './Coverflow';
 import ProductModal from './ProductModal';
+import ProductImage from './ProductImage';
 
 interface StoreNavItem { label: string; href: string; }
 interface StoreTemplateProps {
@@ -102,7 +103,14 @@ export default function StoreTemplate({ storeName, title, subtitle, gradient, na
                     const so = av !== undefined && av <= 0;
                     return (
                       <div key={pr.id} style={{ border: '1px solid #ECEFF1', borderRadius: 12, padding: '0.5rem', textAlign: 'center', background: '#FFF', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                        <div onClick={() => setSelectedProduct(pr)} style={{ width: '100%', height: 'clamp(90px,25vw,140px)', borderRadius: 8, backgroundImage: `url(${pr.imageUrl})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundClip: '#F5F5F5', border: '1px solid #E0E0E0', cursor: 'pointer', marginBottom: '0.2rem' }} />
+                        <ProductImage
+                          src={pr.imageUrl}
+                          srcSecondary={pr.imageUrlSecondary}
+                          alt={pr.name}
+                          onClick={() => setSelectedProduct(pr)}
+                          objectFit="contain"
+                          style={{ width: '100%', height: 'clamp(90px,25vw,140px)', borderRadius: 8, border: '1px solid #E0E0E0', cursor: 'pointer', marginBottom: '0.2rem', background: '#F5F5F5' }}
+                        />
                         <h3 style={{ fontSize: 'clamp(0.7rem,2vw,0.85rem)', fontWeight: 800, color: '#212121', margin: 0 }}>{pr.name}</h3>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.2rem' }}>
                           <div style={{ width: 10, height: 10, borderRadius: '50%', background: pr.colorHex, border: '1px solid #ddd', flexShrink: 0 }} />

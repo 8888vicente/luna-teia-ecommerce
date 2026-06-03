@@ -10,6 +10,7 @@ export type Product = {
   price: number;
   colorHex: string;
   imageUrl: string;
+  imageUrlSecondary?: string;
   stock?: number;
 };
 

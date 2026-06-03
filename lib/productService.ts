@@ -6,22 +6,23 @@ import { PRODUCTS as LOCAL_PRODUCTS } from '../data/products';
 // NOTA: in_stock ahora es int4 (cantidad de piezas disponibles)
 function mapRow(row: Record<string, unknown>): Product {
   return {
-    id:        row.id as string,
-    name:      row.name as string,
-    family:    row.family as ProductFamily,
-    category:  row.category as string,
-    price:     Number(row.price),
-    colorHex:  row.color_hex as string,
-    imageUrl:  row.image_url as string,
-    stock:     row.in_stock !== undefined ? Number(row.in_stock) : undefined,
+    id:                 row.id as string,
+    name:               row.name as string,
+    family:             row.family as ProductFamily,
+    category:           row.category as string,
+    price:              Number(row.price),
+    colorHex:           row.color_hex as string,
+    imageUrl:           row.image_url as string,
+    imageUrlSecondary:  row.image_url_secondary as string | undefined,
+    stock:              row.in_stock !== undefined ? Number(row.in_stock) : undefined,
   };
 }
 
 // Fallback local SOLO para labiales (el resto viene de Supabase)
 function getLocalProducts(store: string): Product[] {
   if (store === 'labiales') return LOCAL_PRODUCTS.map(p => ({ ...p, stock: 5 }));
-    return [];
-  }
+  return [];
+}
 
 // SUPABASE PRIMERO, fallback local después
 export async function getProductsByStore(store: string): Promise<Product[]> {

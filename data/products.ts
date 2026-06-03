@@ -8,6 +8,7 @@ export interface Product {
   price: number;
   colorHex: string;
   imageUrl: string;
+  imageUrlSecondary?: string;
   stock?: number;  // piezas disponibles (viene de Supabase)
 }
 

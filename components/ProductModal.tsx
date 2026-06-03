@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useCart, Product } from '../context/CartContext';
+import ProductImage from './ProductImage';
 
 interface ProductModalProps {
   product: Product & { description?: string };
@@ -67,11 +68,6 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  const historyClosing = useRef(false);
-  const historyPushed = useRef(false);
-  // Nota: se eliminó la manipulación directa del historial para evitar
-  // que navegaciones/rehidrataciones cierren el modal automáticamente.
-
   const description = DESCRIPTIONS[product.name] ?? DEFAULT_DESC;
 
   return (
@@ -104,57 +100,58 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
         animation: 'modalFlowIn 0.5s cubic-bezier(0.2, 1.15, 0.4, 1)'
       }}>
 
-        {/* Header con foto */}
-        <div style={{
-          position: 'relative',
-          height: 'clamp(120px, 25vh, 180px)',
-          backgroundImage: `url(${product.imageUrl})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundColor: '#f5f5f5'
-        }}>
-          {/* Degradado de foto a blanco */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(255,255,255,1) 100%)'
-          }} />
+        {/* Header con imagen ProductImage */}
+                <div style={{
+                  position: 'relative',
+                  height: 'clamp(140px, 28vh, 200px)',
+                  backgroundColor: '#f8f8f8'
+                }}>
+                  <ProductImage
+                    src={product.imageUrl}
+                    srcSecondary={product.imageUrlSecondary}
+                    alt={product.name}
+                    className="w-full h-full"
+                    objectFit="contain"
+                  />
 
-          {/* Botón cerrar */}
-          <button
-            onClick={onClose}
-            style={{
-              position: 'absolute', top: '1rem', right: '1rem',
-              width: '36px', height: '36px',
-              borderRadius: '50%',
-              backgroundColor: 'rgba(255,255,255,0.9)',
-              border: 'none', cursor: 'pointer',
-              fontSize: '1.2rem', fontWeight: 'bold',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#212121'
-            }}
-          >
-            ×
-          </button>
+                  {/* Botón cerrar */}
+                  <button
+                    onClick={onClose}
+                    style={{
+                      position: 'absolute', top: '1rem', right: '1rem',
+                      width: '36px', height: '36px',
+                      borderRadius: '50%',
+                      backgroundColor: 'rgba(255,255,255,0.95)',
+                      border: 'none', cursor: 'pointer',
+                      fontSize: '1.2rem', fontWeight: 'bold',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: '#212121',
+                      zIndex: 10
+                    }}
+                  >
+                    ×
+                  </button>
 
-          {/* Burbuja de color */}
-          <div style={{
-            position: 'absolute', bottom: '-15px', left: '1rem',
-            width: '40px', height: '40px',
-            borderRadius: '50%',
-            backgroundColor: product.colorHex,
-            border: '2px solid #fff',
-            boxShadow: `0 4px 12px ${product.colorHex}88`
-          }} />
-        </div>
+                  {/* Burbuja de color */}
+                  <div style={{
+                    position: 'absolute', bottom: '1rem', left: '1rem',
+                    width: '42px', height: '42px',
+                    borderRadius: '50%',
+                    backgroundColor: product.colorHex,
+                    border: '3px solid #fff',
+                    boxShadow: `0 4px 12px ${product.colorHex}88`,
+                    zIndex: 10
+                  }} />
+                </div>
 
-        {/* Contenido */}
-        <div style={{ padding: '1.25rem 1rem 1rem' }}>
+                {/* Contenido */}
+                                <div style={{ padding: '1.25rem', position: 'relative', zIndex: 5, backgroundColor: 'rgba(255,255,255,0.6)' }}>
           {/* Nombre + categoría */}
-          <div style={{ marginLeft: '3rem' }}>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: '900', color: '#212121', margin: 0 }}>
-              {product.name}
-            </h2>
+                    <div>
+                      <h2 style={{ fontSize: '1.3rem', fontWeight: '900', color: '#212121', margin: 0 }}>
+                        {product.name}
+                      </h2>
             <p style={{ fontSize: '0.7rem', color: '#9e9e9e', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase', margin: '0.1rem 0 0' }}>
               {product.category} · Mia Terra
             </p>
@@ -169,18 +166,14 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
           <div style={{ height: '1px', backgroundColor: '#f0f0f0', margin: '0 0 0.5rem' }} />
 
           {/* Descripción */}
-          <p style={{
-            fontSize: '0.85rem',
-            lineHeight: '1.4',
-            color: '#424242',
-            margin: '0 0 0.5rem',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden'
-          }}>
-            {description}
-          </p>
+                    <p style={{
+                      fontSize: '0.85rem',
+                      lineHeight: '1.4',
+                      color: '#424242',
+                      margin: '0 0 0.5rem'
+                    }}>
+                      {description}
+                    </p>
 
           {/* Badge natural */}
           <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', margin: '0.5rem 0' }}>

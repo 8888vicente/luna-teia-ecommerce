@@ -2,10 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 
-interface HeroSliderBackgroundProps {
-  images?: string[];
-}
-
 // Imágenes locales del intro (logointro.webp primero)
 const INTRO_IMAGES = [
   '/images/intro/logointro.webp',
@@ -17,9 +13,9 @@ const INTRO_IMAGES = [
   '/images/intro/terraintro.webp',
 ];
 
-export default function HeroSliderBackground({ images }: HeroSliderBackgroundProps) {
-  // Usar imágenes pasadas o las locales del intro
-  const introImages = images && images.length > 0 ? images : INTRO_IMAGES;
+export default function HeroSliderBackground() {
+  // Siempre usar imágenes locales del intro
+  const introImages = INTRO_IMAGES;
 
   // Estabilizar la referencia: solo recalcular si la lista REAL cambia
   const prevRef = useRef<string[]>([]);

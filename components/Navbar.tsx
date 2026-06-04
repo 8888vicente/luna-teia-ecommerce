@@ -27,7 +27,7 @@ export default function Navbar() {
       }}>
         <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
           <img 
-            src="/logo1.jpeg" 
+            src="/images/intro/logointro.webp" 
             alt="Luna Teia Cosméticos" 
             style={{ height: 'clamp(35px, 5vw, 45px)', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
           />

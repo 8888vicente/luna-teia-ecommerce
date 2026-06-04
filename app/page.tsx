@@ -30,25 +30,6 @@ async function getCategoryImages() {
   return categories;
 }
 
-async function getHeroImages() {
-  try {
-    const stores = ['labiales', 'sombras', 'delineadores', 'brillo', 'otros'];
-    const images = await Promise.all(
-      stores.map(async (store) => {
-        try {
-          const products = await getProductsByStore(store);
-          return products[Math.floor(Math.random() * Math.min(3, products.length))]?.imageUrl;
-        } catch {
-          return undefined;
-        }
-      })
-    );
-    return images.filter((img) => img !== undefined) as string[];
-  } catch {
-    return [];
-  }
-}
-
 async function getAllProducts() {
   try {
     const stores = ['labiales', 'sombras', 'delineadores', 'brillo', 'otros'];
@@ -75,9 +56,8 @@ async function getAllProducts() {
 }
 
 export default async function Home() {
-  const [categories, heroImages, storyProducts] = await Promise.all([
+  const [categories, storyProducts] = await Promise.all([
     getCategoryImages(),
-    getHeroImages(),
     getAllProducts()
   ]);
   return (
@@ -100,7 +80,7 @@ export default async function Home() {
         overflow: 'hidden',
         backgroundColor: '#1a1a2e'
       }}>
-        <HeroSliderBackground images={heroImages} />
+        <HeroSliderBackground />
         
         <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
           <h1 style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', border: 0 }}>

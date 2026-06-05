@@ -219,6 +219,8 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
   const touchStart = useRef<{ x: number; y: number; t: number } | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const galleryTouchStart = useRef<{ x: number; t: number } | null>(null);
+  const historyPushed = useRef(false);
+  const closingRef = useRef(false);
 
   // Cart info
   const cartQuantity = items.find(item => item.id === product.id)?.quantity ?? 0;
@@ -242,6 +244,28 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
     setImageGalleryIndex(0);
     setSwipeOffset(0);
   }, [product.id]);
+
+  // Manejo del botón atrás (historial) en móviles
+  useEffect(() => {
+    window.history.pushState({ modalOpen: true }, '');
+    historyPushed.current = true;
+
+    const handlePopState = () => {
+      closingRef.current = true;
+      onClose();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      if (historyPushed.current && !closingRef.current) {
+        if (window.history.state?.modalOpen) {
+          window.history.back();
+        }
+      }
+    };
+  }, [onClose]);
 
   // Cerrar con Escape
   useEffect(() => {
@@ -346,6 +370,7 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
       {/* ── Modal fullscreen-like (tall, scrollable) ── */}
       <div
         ref={modalRef}
+        onClick={onClose}
         onTouchStart={handleModalTouchStart}
         onTouchMove={handleModalTouchMove}
         onTouchEnd={handleModalTouchEnd}
@@ -357,9 +382,11 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
           justifyContent: 'center',
           alignItems: 'flex-end',
           animation: 'modalSlideUp 0.4s cubic-bezier(0.2, 1, 0.3, 1)',
+          cursor: 'pointer',
         }}
       >
         <div
+          onClick={(e) => e.stopPropagation()}
           style={{
             width: '100%',
             maxWidth: '500px',
@@ -377,6 +404,7 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
             transition: isTransitioning
               ? 'transform 0.15s ease-out, opacity 0.15s ease-out'
               : swipeOffset === 0 ? 'transform 0.25s ease-out' : 'none',
+            cursor: 'default',
           }}
         >
           {/* ── Handle de arrastre + close ── */}
@@ -390,12 +418,16 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
             }} />
             <button
               onClick={onClose}
+              aria-label="Cerrar modal"
               style={{
-                position: 'absolute', right: '0.75rem', top: '0.4rem',
-                width: '32px', height: '32px', borderRadius: '50%',
-                backgroundColor: '#f5f5f5', border: 'none', cursor: 'pointer',
-                fontSize: '1.1rem', fontWeight: 'bold', color: '#757575',
+                position: 'absolute', right: '1rem', top: '0.6rem',
+                width: '38px', height: '38px', borderRadius: '50%',
+                backgroundColor: '#f0f0f0', border: 'none', cursor: 'pointer',
+                fontSize: '1.3rem', fontWeight: 'bold', color: '#333333',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                zIndex: 10,
+                transition: 'all 0.2s ease',
               }}
             >×</button>
           </div>

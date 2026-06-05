@@ -92,36 +92,49 @@ export default function StoreTemplate({ storeName, title, subtitle, gradient, na
         ) : viewMode === 'coverflow' ? (
           <Coverflow products={products} families={families} onProductClick={setSelectedProduct} />
         ) : (
-          <div style={{ padding: '0.5rem 0.5rem 2rem', maxWidth: 900, margin: '0 auto' }}>
+          <div style={{ padding: '0.75rem 0.75rem 2rem', maxWidth: 1100, margin: '0 auto' }}>
             {families.map(f => (
-              <div key={f} style={{ marginBottom: '1.5rem' }}>
-                <h2 style={{ fontSize: 'clamp(1rem,4vw,1.3rem)', fontWeight: 'bold', margin: '0 0 0.5rem 0.25rem', borderBottom: '2px solid #E53935', display: 'inline-block' }}>{f}</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.5rem' }}>
+              <div key={f} style={{ marginBottom: '2rem' }}>
+                <h2 style={{ fontSize: 'clamp(1.1rem,4.5vw,1.5rem)', fontWeight: '950', margin: '0 0 0.75rem 0.25rem', borderBottom: '3px solid #E53935', display: 'inline-block', color: '#212121', paddingBottom: '0.15rem' }}>{f}</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(170px, 25vw, 240px), 1fr))', gap: '0.85rem' }}>
                   {p(f).map(pr => {
                     const q = items.find(i => i.id === pr.id)?.quantity ?? 0;
                     const av = pr.stock !== undefined ? Math.max(0, pr.stock - q) : undefined;
                     const so = av !== undefined && av <= 0;
                     return (
-                      <div key={pr.id} style={{ border: '1px solid #ECEFF1', borderRadius: 12, padding: '0.5rem', textAlign: 'center', background: '#FFF', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
+                      <div key={pr.id} style={{ border: '1px solid #ECEFF1', borderRadius: 16, padding: '0.85rem', textAlign: 'center', background: '#FFF', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '0.45rem', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}>
                         <ProductImage
                           src={pr.imageUrl}
                           srcSecondary={pr.imageUrlSecondary}
                           alt={pr.name}
                           onClick={() => setSelectedProduct(pr)}
                           objectFit="contain"
-                          style={{ width: '100%', height: 'clamp(90px,25vw,140px)', borderRadius: 8, border: '1px solid #E0E0E0', cursor: 'pointer', marginBottom: '0.2rem', background: '#F5F5F5' }}
+                          style={{ width: '100%', height: 'clamp(140px, 30vw, 210px)', borderRadius: 10, border: '1px solid #E0E0E0', cursor: 'pointer', marginBottom: '0.2rem', background: '#F5F5F5' }}
                         />
-                        <h3 style={{ fontSize: 'clamp(0.7rem,2vw,0.85rem)', fontWeight: 800, color: '#212121', margin: 0 }}>{pr.name}</h3>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.2rem' }}>
-                          <div style={{ width: 10, height: 10, borderRadius: '50%', background: pr.colorHex, border: '1px solid #ddd', flexShrink: 0 }} />
-                          <span style={{ fontSize: 'clamp(0.5rem,1.5vw,0.6rem)', color: '#9e9e9e', fontWeight: 600 }}>{pr.category}</span>
+                        <h3 style={{ fontSize: 'clamp(0.85rem,2vw,1.05rem)', fontWeight: 800, color: '#212121', margin: 0, minHeight: '2.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1.25 }}>{pr.name}</h3>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}>
+                          <div style={{ width: 12, height: 12, borderRadius: '50%', background: pr.colorHex, border: '1px solid #ddd', flexShrink: 0 }} />
+                          <span style={{ fontSize: 'clamp(0.65rem,1.5vw,0.75rem)', color: '#9e9e9e', fontWeight: 600 }}>{pr.category}</span>
                         </div>
-                        <p style={{ fontWeight: 800, fontSize: 'clamp(0.8rem,2.5vw,0.95rem)', color: '#E53935', margin: 0 }}>${pr.price}</p>
-                        {av !== undefined && <span style={{ fontSize: 'clamp(0.5rem,1.5vw,0.6rem)', color: av > 0 ? '#4CAF50' : '#f44336', fontWeight: 700 }}>{av > 0 ? `${av}` : 'Agotado'}</span>}
-                        <div style={{ display: 'flex', gap: '0.2rem', marginTop: '0.15rem' }}>
-                          <button onClick={() => setSelectedProduct(pr)} style={{ flex: 1, padding: '0.25rem 0.3rem', background: '#f5f5f5', color: '#424242', borderRadius: 6, fontWeight: 700, fontSize: 'clamp(0.55rem,1.5vw,0.65rem)', cursor: 'pointer', border: '1px solid #e0e0e0' }}>Ver</button>
-                          {so ? <button disabled style={{ flex: 1, padding: '0.25rem 0.3rem', background: '#9e9e9e', color: 'white', borderRadius: 6, fontWeight: 700, fontSize: 'clamp(0.55rem,1.5vw,0.65rem)', border: 'none', opacity: 0.7 }}>Agot</button>
-                          : <button onClick={() => addItem(pr)} style={{ flex: 1, padding: '0.25rem 0.3rem', background: '#212121', color: 'white', borderRadius: 6, fontWeight: 700, fontSize: 'clamp(0.55rem,1.5vw,0.65rem)', cursor: 'pointer', border: 'none' }}>+ Carro</button>}
+                        <p style={{ fontWeight: 900, fontSize: 'clamp(1rem,2.5vw,1.25rem)', color: '#E53935', margin: 0 }}>${pr.price} <span style={{ fontSize: '0.75rem', color: '#9e9e9e', fontWeight: '500' }}>MXN</span></p>
+                        {av !== undefined && (
+                          <span style={{ 
+                            fontSize: 'clamp(0.65rem,1.5vw,0.75rem)', 
+                            color: av > 0 ? '#4CAF50' : '#f44336', 
+                            backgroundColor: av > 0 ? '#E8F5E9' : '#FFEBEE',
+                            padding: '0.15rem 0.5rem',
+                            borderRadius: '9999px',
+                            fontWeight: 700,
+                            display: 'inline-block',
+                            margin: '0 auto'
+                          }}>
+                            {av > 0 ? `${av} disponibles` : 'Agotado'}
+                          </span>
+                        )}
+                        <div style={{ display: 'flex', gap: '0.35rem', marginTop: 'auto', paddingTop: '0.25rem' }}>
+                          <button onClick={() => setSelectedProduct(pr)} style={{ flex: 1, padding: '0.4rem 0.5rem', background: '#f5f5f5', color: '#424242', borderRadius: 8, fontWeight: 700, fontSize: 'clamp(0.7rem,1.5vw,0.8rem)', cursor: 'pointer', border: '1px solid #e0e0e0', transition: 'background 0.2s' }}>Ver</button>
+                          {so ? <button disabled style={{ flex: 1, padding: '0.4rem 0.5rem', background: '#9e9e9e', color: 'white', borderRadius: 8, fontWeight: 700, fontSize: 'clamp(0.7rem,1.5vw,0.8rem)', border: 'none', opacity: 0.7 }}>Agotado</button>
+                          : <button onClick={() => addItem(pr)} style={{ flex: 1, padding: '0.4rem 0.5rem', background: '#212121', color: 'white', borderRadius: 8, fontWeight: 700, fontSize: 'clamp(0.7rem,1.5vw,0.8rem)', cursor: 'pointer', border: 'none', transition: 'background 0.2s' }}>+ Carro</button>}
                         </div>
                       </div>
                     );

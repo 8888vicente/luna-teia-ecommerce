@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface Product {
@@ -19,7 +19,15 @@ export default function ProductStoriesBar({ products = [] }: ProductStoriesBarPr
   const ALL_PRODUCTS = products;
   const [activeIndex, setActiveIndex] = useState(Math.floor(Math.max(1, ALL_PRODUCTS.length) / 2));
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Si no hay productos, no renderizar la barra
   if (ALL_PRODUCTS.length === 0) {
@@ -99,11 +107,11 @@ export default function ProductStoriesBar({ products = [] }: ProductStoriesBarPr
         style={{
           position: 'relative',
           width: '100%',
-          height: '120px',
+          height: `${isMobile ? 150 : 220}px`,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          perspective: '900px',
+          perspective: isMobile ? '600px' : '900px',
           overflow: 'hidden'
         }}>
 
@@ -111,10 +119,10 @@ export default function ProductStoriesBar({ products = [] }: ProductStoriesBarPr
         <button
           onClick={handlePrev}
           style={{
-            position: 'absolute', left: '1rem', zIndex: 300,
+            position: 'absolute', left: isMobile ? '5%' : '10%', zIndex: 300,
             background: 'rgba(255,255,255,0.9)', border: 'none',
-            borderRadius: '50%', width: '28px', height: '28px',
-            fontSize: '1rem', cursor: 'pointer',
+            borderRadius: '50%', width: isMobile ? '28px' : '34px', height: isMobile ? '28px' : '34px',
+            fontSize: isMobile ? '1rem' : '1.2rem', cursor: 'pointer',
             boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}
@@ -133,16 +141,15 @@ export default function ProductStoriesBar({ products = [] }: ProductStoriesBarPr
           if (Math.abs(diff) > VISIBLE_RANGE) return null;
 
           const isCenter = diff === 0;
-          // Separación: 56px por paso → 6 pasos = 336px a cada lado. Centro (78px*1.2=94px) + 672px = ~766px total
-          const translateX = diff * 56;
-          // Escala: baja suavemente 6% por paso. diff=1→0.94, diff=6→0.64
-          const scale = isCenter ? 1.20 : Math.max(0.60, 1 - Math.abs(diff) * 0.062);
+          const stepPx = isMobile ? 80 : 110;
+          const centerScale = isMobile ? 1.3 : 1.5;
+          const size = isMobile ? 100 : 160;
+
+          const translateX = diff * stepPx;
+          const scale = isCenter ? centerScale : Math.max(0.58, 1 - Math.abs(diff) * 0.04);
           const zIndex = 200 - Math.abs(diff) * 10;
-          // Opacidad: curva lineal suave. diff=1→86%, diff=6→42%
           const opacity = isCenter ? 1 : Math.max(0.38, 1 - Math.abs(diff) * 0.115);
-          // Blur muy ligero — solo los más alejados tienen algo de difuminado
           const blur = isCenter ? 0 : Math.max(0, (Math.abs(diff) - 1) * 0.35);
-          const size = 78; // px — tamaño base de la burbuja
 
           return (
             <div
@@ -185,10 +192,10 @@ export default function ProductStoriesBar({ products = [] }: ProductStoriesBarPr
         <button
           onClick={handleNext}
           style={{
-            position: 'absolute', right: '1rem', zIndex: 300,
+            position: 'absolute', right: isMobile ? '5%' : '10%', zIndex: 300,
             background: 'rgba(255,255,255,0.9)', border: 'none',
-            borderRadius: '50%', width: '28px', height: '28px',
-            fontSize: '1rem', cursor: 'pointer',
+            borderRadius: '50%', width: isMobile ? '28px' : '34px', height: isMobile ? '28px' : '34px',
+            fontSize: isMobile ? '1rem' : '1.2rem', cursor: 'pointer',
             boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}

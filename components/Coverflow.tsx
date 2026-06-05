@@ -27,10 +27,10 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
   const familyProducts = products.filter(p => p.family === activeFamily);
 
   // Tamaños adaptables
-  const bubbleSize = isMobile ? 72 : 120;
-  const containerHeight = isMobile ? 110 : 170;
-  const stepPx = isMobile ? 50 : 72;
-  const centerScale = isMobile ? 1.15 : 1.22;
+  const bubbleSize = isMobile ? 100 : 160;
+  const containerHeight = isMobile ? 150 : 220;
+  const stepPx = isMobile ? 80 : 110;
+  const centerScale = isMobile ? 1.3 : 1.5;
 
   // Reset horizontal index when changing family
   useEffect(() => {
@@ -139,7 +139,7 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
 
           const isCenter = diff === 0;
           const translateX = diff * stepPx;
-          const scale = isCenter ? centerScale : Math.max(0.58, 1 - Math.abs(diff) * 0.062);
+          const scale = isCenter ? centerScale : Math.max(0.58, 1 - Math.abs(diff) * 0.04);
           const zIndex = 100 - Math.abs(diff);
           const opacity = isCenter ? 1 : Math.max(0.36, 1 - Math.abs(diff) * 0.115);
           const blur = isCenter ? 0 : Math.max(0, (Math.abs(diff) - 1) * 0.4);

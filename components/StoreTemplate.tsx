@@ -133,7 +133,14 @@ export default function StoreTemplate({ storeName, title, subtitle, gradient, na
         )}
       </section>
 
-      {selectedProduct && <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />}
+      {selectedProduct && (
+        <ProductModal
+          product={selectedProduct}
+          products={products}
+          onClose={() => setSelectedProduct(null)}
+          onNavigate={(p) => setSelectedProduct(p)}
+        />
+      )}
     </main>
   );
 }

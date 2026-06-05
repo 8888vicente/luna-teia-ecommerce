@@ -136,7 +136,7 @@ export default function StoreTemplate({ storeName, title, subtitle, gradient, na
       {selectedProduct && (
         <ProductModal
           product={selectedProduct}
-          products={products}
+          products={products.filter(p => p.family === selectedProduct.family)}
           onClose={() => setSelectedProduct(null)}
           onNavigate={(p) => setSelectedProduct(p)}
         />

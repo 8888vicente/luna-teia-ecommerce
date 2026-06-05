@@ -375,7 +375,11 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
       {/* ── Modal fullscreen-like (tall, scrollable) ── */}
       <div
         ref={modalRef}
-        onClick={onClose}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
         onTouchStart={handleModalTouchStart}
         onTouchMove={handleModalTouchMove}
         onTouchEnd={handleModalTouchEnd}
@@ -391,7 +395,6 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
         }}
       >
         <div
-          onClick={(e) => e.stopPropagation()}
           style={{
             width: '100%',
             maxWidth: '500px',

@@ -245,6 +245,11 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
     setSwipeOffset(0);
   }, [product.id]);
 
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   // Manejo del botón atrás (historial) en móviles
   useEffect(() => {
     window.history.pushState({ modalOpen: true }, '');
@@ -252,7 +257,7 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
 
     const handlePopState = () => {
       closingRef.current = true;
-      onClose();
+      onCloseRef.current();
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -265,7 +270,7 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
         }
       }
     };
-  }, [onClose]);
+  }, []);
 
   // Cerrar con Escape
   useEffect(() => {

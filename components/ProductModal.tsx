@@ -554,17 +554,17 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
                   ${product.price}
                 </span>
                 <span style={{ fontSize: '0.85rem', color: '#9e9e9e', fontWeight: '500' }}>MXN</span>
-                {availableQuantity !== undefined && (
-                  <span style={{
-                    marginLeft: 'auto',
-                    fontSize: '0.75rem', fontWeight: '700',
-                    color: availableQuantity > 0 ? '#4CAF50' : '#f44336',
-                    backgroundColor: availableQuantity > 0 ? '#E8F5E9' : '#FFEBEE',
-                    padding: '0.2rem 0.5rem', borderRadius: '9999px',
-                  }}>
-                    {availableQuantity > 0 ? `${availableQuantity} disponibles` : 'Agotado'}
-                  </span>
-                )}
+                {availableQuantity !== undefined && availableQuantity <= 0 && (
+                                  <span style={{
+                                    marginLeft: 'auto',
+                                    fontSize: '0.75rem', fontWeight: '700',
+                                    color: '#f44336',
+                                    backgroundColor: '#FFEBEE',
+                                    padding: '0.2rem 0.5rem', borderRadius: '9999px',
+                                  }}>
+                                    Agotado
+                                  </span>
+                                )}
               </div>
 
               {/* Separador */}

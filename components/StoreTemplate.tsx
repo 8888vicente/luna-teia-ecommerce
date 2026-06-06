@@ -117,18 +117,18 @@ export default function StoreTemplate({ storeName, title, subtitle, gradient, na
                           <span style={{ fontSize: 'clamp(0.65rem,1.5vw,0.75rem)', color: '#9e9e9e', fontWeight: 600 }}>{pr.category}</span>
                         </div>
                         <p style={{ fontWeight: 900, fontSize: 'clamp(1rem,2.5vw,1.25rem)', color: '#E53935', margin: 0 }}>${pr.price} <span style={{ fontSize: '0.75rem', color: '#9e9e9e', fontWeight: '500' }}>MXN</span></p>
-                        {av !== undefined && (
+                        {av !== undefined && av <= 0 && (
                           <span style={{ 
                             fontSize: 'clamp(0.65rem,1.5vw,0.75rem)', 
-                            color: av > 0 ? '#4CAF50' : '#f44336', 
-                            backgroundColor: av > 0 ? '#E8F5E9' : '#FFEBEE',
+                            color: '#f44336', 
+                            backgroundColor: '#FFEBEE',
                             padding: '0.15rem 0.5rem',
                             borderRadius: '9999px',
                             fontWeight: 700,
                             display: 'inline-block',
                             margin: '0 auto'
                           }}>
-                            {av > 0 ? `${av} disponibles` : 'Agotado'}
+                            Agotado
                           </span>
                         )}
                         <div style={{ display: 'flex', gap: '0.35rem', marginTop: 'auto', paddingTop: '0.25rem' }}>

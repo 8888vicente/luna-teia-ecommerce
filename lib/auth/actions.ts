@@ -3,27 +3,19 @@
  *
  * Server Actions para autenticacion (login, signout, etc.).
  * Se ejecutan SOLO en el servidor (Next App Router).
- * Devuelven ActionResult<T> para contrato uniforme ok/error.
- * NUNCA exponen secretos ni la SERVICE_KEY al bundle.
  *
- * Para usarlas desde un Client Component:
- *   "use client";
- *   import { signInAction } from "@/lib/auth";
- *   const res = await signInAction(formData);
+ * NOTA: este modulo NO usa el cliente SERVICE (service role).
+ * Para leer el rol del usuario tras el login usamos
+ * supabase.auth.getUser(), que respeta la sesion recien creada
+ * y nos da el app_metadata.role sin necesidad de bypassear RLS.
  */
 
 "use server";
 
 import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase/server";
-import { getSupabaseService } from "@/lib/supabase/service";
 import type { ActionResult, AppRol } from "./types";
 
-/**
- * Resultado del login. Si ok=true, el `redirect` ya se
- * habra ejecutado y este return nunca se alcanza.
- * Si ok=false, devolvemos el mensaje de error para el form.
- */
 export type SignInResult = ActionResult<{ rol: AppRol }>;
 
 /**
@@ -32,11 +24,11 @@ export type SignInResult = ActionResult<{ rol: AppRol }>;
  * Flujo:
  *   1. Validar campos no vacios.
  *   2. signInWithPassword con el cliente del usuario (crea cookie).
- *   3. Leer app_metadata.role con el cliente SERVICE.
- *   4. Determinar la ruta de destino segun el rol.
+ *   3. Leer el rol desde signInData.user.app_metadata.role
+ *      (NO usamos service role: el cliente del usuario ya
+ *      conoce su propio app_metadata tras el signIn).
+ *   4. Decidir ruta de destino segun el rol.
  *   5. redirect() (lanza NEXT_REDIRECT, no retorna).
- *
- * Si algo falla, devolvemos { ok: false, error }.
  */
 export async function signInAction(formData: FormData): Promise<SignInResult> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
@@ -49,7 +41,7 @@ export async function signInAction(formData: FormData): Promise<SignInResult> {
 
   const supabase = await getSupabaseServer();
 
-  // 1) Login con el cliente del usuario (respeta RLS, crea cookie)
+  // 1) Login normal (crea cookie de sesion)
   const { data: signInData, error: signInError } =
     await supabase.auth.signInWithPassword({ email, password });
 
@@ -62,20 +54,9 @@ export async function signInAction(formData: FormData): Promise<SignInResult> {
     };
   }
 
-  // 2) Leer el rol desde app_metadata con cliente SERVICE
-  const svc = getSupabaseService();
-  const { data: userRow, error: userError } = await svc.auth.admin.getUserById(
-    signInData.user.id
-  );
-
-  if (userError || !userRow?.user) {
-    return {
-      ok: false,
-      error: "Sesion iniciada pero no se pudo leer el rol del usuario.",
-    };
-  }
-
-  const appMeta = (userRow.user.app_metadata ?? {}) as Record<string, unknown>;
+  // 2) Leer el rol desde app_metadata del usuario recien logueado.
+  //    El cliente del usuario YA conoce su app_metadata tras signIn.
+  const appMeta = (signInData.user.app_metadata ?? {}) as Record<string, unknown>;
   const rolRaw = (appMeta.role as string | null | undefined) ?? null;
 
   if (!rolRaw) {
@@ -89,10 +70,8 @@ export async function signInAction(formData: FormData): Promise<SignInResult> {
   }
 
   // 3) Decidir ruta de destino.
-  //    Si vino un `next` valido (misma app, ruta interna), se respeta.
-  //    Si no, mandamos al panel por defecto del rol.
   const targetByRol: Record<string, string> = {
-    Administrador: "/admin",
+    Administrador: "/admin/crm",
     Vendedor: "/vendedor",
     Repartidor: "/repartidor",
   };
@@ -106,8 +85,7 @@ export async function signInAction(formData: FormData): Promise<SignInResult> {
 }
 
 /**
- * Server Action: cerrar sesion. Llamable desde el header
- * (que es server component) o desde un client component.
+ * Server Action: cerrar sesion.
  */
 export async function signOutAction(): Promise<never> {
   const supabase = await getSupabaseServer();
@@ -118,12 +96,12 @@ export async function signOutAction(): Promise<never> {
 /**
  * Whitelist de `next` aceptable: solo rutas internas que
  * empiezan con `/` y NO con `//` (protocolo-relativo).
- * Evita open-redirect: ?next=https://evil.com.
+ * Evita open-redirect.
  */
 function isSafeNext(next: string | null): string | null {
   if (!next) return null;
   if (!next.startsWith("/")) return null;
   if (next.startsWith("//")) return null;
-  if (next.startsWith("/login")) return null; // evita loop login
+  if (next.startsWith("/login")) return null;
   return next;
 }

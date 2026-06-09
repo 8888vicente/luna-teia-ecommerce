@@ -13,7 +13,7 @@
 
 import { useState, useTransition } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { signInAction } from "@/lib/auth";
+import { signInAction } from "@/lib/auth/client";
 import styles from "./login.module.css";
 
 export default function LoginPage() {

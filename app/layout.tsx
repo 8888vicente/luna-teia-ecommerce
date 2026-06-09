@@ -1,17 +1,51 @@
-import "./globals.css";
-import Script from "next/script";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { CartProvider } from "../context/CartContext";
-import CartDrawer from "../components/CartDrawer";
-import MsiBanner from "../components/MsiBanner";
+/**
+ * app/layout.tsx
+ * ───────────────────────────────────────────────────────────
+ * Root Layout del CRM Luna Teia.
+ *
+ * Es la capa MÁS EXTERNA. Solo monta:
+ *   - Fuentes (Inter + Fraunces vía next/font).
+ *   - globals.css (variables CSS, reset, tipografía).
+ *   - ToastProvider (provider global de notificaciones).
+ *
+ * NO monta Navbar/Footer/CartProvider. Esos son del
+ * e-commerce público y viven en app/(public)/layout.tsx.
+ *
+ * El grupo (authed)/layout.tsx monta su propio sidebar
+ * adaptado al rol, sin la Navbar de la tienda.
+ * ───────────────────────────────────────────────────────────
+ */
 
-export const metadata = {
-  title: "Luna Teia Cosméticos",
-  description: "Tienda en línea de cosméticos, labiales y más. Envío a todo México.",
+import type { Metadata, Viewport } from 'next';
+import { Inter, Fraunces } from 'next/font/google';
+import { ToastProvider } from '@/lib/ui';
+import './globals.css';
+
+// ── Fuentes (auto-hospedadas por next/font) ─────────────
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-fraunces',
+  display: 'swap',
+  // Cargamos los pesos que usa la app: títulos (500) y bold (600)
+  weight: ['500', '600', '700'],
+});
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Luna Teia — CRM',
+    template: '%s · Luna Teia',
+  },
+  description:
+    'Sistema de gestión de ventas, repartos y comisiones de Luna Teia Cosméticos.',
 };
 
-export const viewport = {
+export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -23,39 +57,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
-      {/* Meta Pixel - Facebook */}
-      <Script
-        id="meta-pixel"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '1633994451033463');
-            fbq('track', 'PageView');
-          `,
-        }}
-      />
-      <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <CartProvider>
-          {/* Announcement Bar Pequeña */}
-          <div style={{ backgroundColor: '#212121', color: 'white', textAlign: 'center', padding: '0.25rem', fontSize: 'clamp(0.65rem, 1.5vw, 0.8rem)', fontWeight: 'bold' }}>
-            🚚 ENVÍO GRATIS en compras de $500+ | Envío a $80 de $200 a $499 | Envío nacional $150
-          </div>
-          {/* Banner MSI deslizante */}
-          <MsiBanner />
-          <Navbar />
-          {children}
-          <Footer />
-          <CartDrawer />
-        </CartProvider>
+    <html lang="es" className={`${inter.variable} ${fraunces.variable}`}>
+      <body>
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );

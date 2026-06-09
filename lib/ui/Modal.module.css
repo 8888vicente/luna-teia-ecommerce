@@ -1,0 +1,92 @@
+/* lib/ui/Modal.module.css */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 16, 14, 0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+  animation: fadeIn 120ms ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.dialog {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow:
+    0 20px 25px -5px rgba(20, 16, 14, 0.15),
+    0 8px 10px -6px rgba(20, 16, 14, 0.1);
+  width: 100%;
+  max-height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 180ms ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.s_sm { max-width: 360px; }
+.s_md { max-width: 560px; }
+.s_lg { max-width: 760px; }
+.s_xl { max-width: 960px; }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.4rem;
+  border-bottom: 1px solid #ebe5e0;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #2a2a2a;
+}
+
+.close {
+  background: transparent;
+  border: none;
+  color: #6b5b50;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.close:hover {
+  background: #f4ede7;
+  color: #2a2a2a;
+}
+
+.body {
+  padding: 1.4rem;
+  overflow-y: auto;
+  color: #2a2a2a;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.footer {
+  padding: 1rem 1.4rem;
+  border-top: 1px solid #ebe5e0;
+  background: #fffaf5;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  align-items: center;
+}

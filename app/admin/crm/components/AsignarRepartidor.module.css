@@ -1,0 +1,77 @@
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.table th {
+  background: #fafafa;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.dim {
+  opacity: 0.5;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #f0f0f0;
+  color: #555;
+}
+
+.facebook { background: #e3f2fd; color: #1565c0; }
+.ecommerce { background: #f3e5f5; color: #6a1b9a; }
+.kiosk { background: #fff3e0; color: #e65100; }
+.reparto_local { background: #e8f5e9; color: #2e7d32; }
+.paqueteria_nacional { background: #fce4ec; color: #c62828; }
+
+.select {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background: #fff;
+  cursor: pointer;
+  min-width: 160px;
+}
+
+.select:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: #2e7d32;
+  background: #e8f5e9;
+  border-radius: 8px;
+  font-size: 1rem;
+}

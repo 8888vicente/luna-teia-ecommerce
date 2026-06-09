@@ -1,44 +1,138 @@
+/**
+ * app/globals.css
+ * ───────────────────────────────────────────────────────────
+ * Estilos globales de Luna Teia. Define:
+ *   - Variables CSS de la paleta (--color-*).
+ *   - Tipografía base (Inter + Fraunces via next/font).
+ *   - Reset ligero.
+ *   - Estilos de elementos base (a, button, img, h1..h6).
+ *
+ * REGLA: ningún componente debe escribir colores en hex
+ * directamente. Siempre consume var(--color-*) para que un
+ * rebranding sea cambiar UNA sola vez.
+ * ───────────────────────────────────────────────────────────
+ */
+
 :root {
-  /* Brand Colors - Luna Teia */
-  --color-primary: #E53935; /* Vivid Red */
-  --color-primary-hover: #C62828;
-  --color-background: #FFFFFF; /* White */
-  --color-surface: #F5F5F5;
-  --color-text: #212121; /* Dark Grey for text */
-  --color-text-light: #757575;
-  --color-accent: #B0BEC5; /* Silver */
-  --color-accent-light: #ECEFF1; /* Light Silver */
-  
-  /* Typography */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  
-  /* Spacing & Sizes */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
+  /* ── ALIAS DE COMPATIBILIDAD ─────────────────────
+   * Estos alias replican la paleta VIEJA de Luna Teia
+   * (la que existía antes del CRM) para que los CSS
+   * modules del e-commerce (checkout, labiales, etc.)
+   * sigan renderizando idénticos a como lo hacían antes.
+   *
+   * Los componentes NUEVOS del CRM usan las variables
+   * semánticas de abajo (--color-acento, --color-texto,
+   * --sp-*, etc.).
+   *
+   * NO BORRAR este bloque hasta migrar todos los
+   * page.module.css del e-commerce a las variables
+   * semánticas nuevas.
+   * ───────────────────────────────────────────────── */
+  --color-primary:        #E53935;  /* Vivid Red */
+  --color-primary-hover:  #C62828;
+  --color-background:     #FFFFFF;
+  --color-surface:        #F5F5F5;
+  --color-text:           #212121;
+  --color-text-light:     #757575;
+  --color-accent:         #B0BEC5;  /* Silver — OJO: NO es el nuevo --color-acento (oro) */
+  --color-accent-light:   #ECEFF1;
+
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont,
+                 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --spacing-xs:  0.25rem;
+  --spacing-sm:  0.5rem;
+  --spacing-md:  1rem;
+  --spacing-lg:  1.5rem;
+  --spacing-xl:  2rem;
   --spacing-xxl: 3rem;
-  
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 16px;
+
+  --border-radius-sm:   4px;
+  --border-radius-md:   8px;
+  --border-radius-lg:   16px;
   --border-radius-pill: 9999px;
+
+  /* ── Paleta principal (CRM) ────────────────────── */
+  --color-fondo:        #fffaf5;  /* blanco hueso */
+  --color-fondo-2:      #f4ede7;  /* fondo alternativo, hovers */
+  --color-superficie:   #ffffff;  /* cards, tablas, modales */
+  --color-texto:        #2a2a2a;  /* grafito, texto principal */
+  --color-texto-suave:  #6b5b50;  /* texto secundario */
+  --color-texto-mute:   #8a7970;  /* texto vacío, hints */
+
+  /* ── Acentos de marca ─────────────────────────── */
+  --color-acento:       #c9a87c;  /* oro rosado: CTAs, totales */
+  --color-acento-hover: #b08e62;
+  --color-rosa:         #e8b4b8;  /* rosa empolvado: badges */
+  --color-rosa-oscuro:  #c98a91;
+
+  /* ── Bordes ───────────────────────────────────── */
+  --color-borde:        #ebe5e0;  /* borde principal */
+  --color-borde-sutil:  #f4ede7;  /* separadores de fila */
+
+  /* ── Estados ──────────────────────────────────── */
+  --color-exito:        #1f6b46;
+  --color-exito-bg:     #e6f4ec;
+  --color-alerta:       #8a5a14;
+  --color-alerta-bg:    #fff3dc;
+  --color-error:        #8a2a1f;
+  --color-error-bg:     #fdecea;
+  --color-info:         #1f4d9c;
+  --color-info-bg:      #e3edff;
+
+  /* ── Tipografía ───────────────────────────────── */
+  --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont,
+               'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, 'Times New Roman', serif;
+
+  --fs-xs:   0.75rem;
+  --fs-sm:   0.875rem;
+  --fs-base: 1rem;
+  --fs-md:   1.125rem;
+  --fs-lg:   1.35rem;
+  --fs-xl:   1.75rem;
+  --fs-2xl:  2.25rem;
+
+  /* ── Espaciado ────────────────────────────────── */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+
+  /* ── Radios ───────────────────────────────────── */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-pill: 9999px;
+
+  /* ── Sombras ──────────────────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(20, 16, 14, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(20, 16, 14, 0.08),
+               0 2px 4px -2px rgba(20, 16, 14, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(20, 16, 14, 0.12),
+               0 4px 6px -4px rgba(20, 16, 14, 0.08);
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
+/* ── Reset ligero ──────────────────────────────── */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { padding: 0; margin: 0; }
 
 body {
-  font-family: var(--font-family);
-  background-color: var(--color-background);
-  color: var(--color-text);
+  font-family: var(--font-sans);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
   line-height: 1.5;
+  font-size: var(--fs-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
 a {
@@ -46,11 +140,15 @@ a {
   text-decoration: none;
 }
 
+a:hover { color: var(--color-acento-hover); }
+
 button {
   cursor: pointer;
   border: none;
   background: none;
   font-family: inherit;
+  color: inherit;
+  font-size: inherit;
 }
 
 img {
@@ -58,3 +156,48 @@ img {
   height: auto;
   display: block;
 }
+
+/* ── Tipografía por jerarquía ───────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--color-texto);
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: var(--fs-2xl); }
+h2 { font-size: var(--fs-xl); }
+h3 { font-size: var(--fs-lg); }
+h4 { font-size: var(--fs-md); }
+h5, h6 { font-size: var(--fs-base); }
+
+p { margin: 0; }
+
+/* ── Inputs y form: una capa base mínima ───────── */
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+/* ── Utilidad: scrollbar discreta en webkit ────── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-borde);
+  border-radius: 999px;
+  border: 2px solid var(--color-fondo);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-texto-mute); }

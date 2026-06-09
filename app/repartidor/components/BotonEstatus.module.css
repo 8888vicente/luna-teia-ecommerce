@@ -1,0 +1,62 @@
+.wrapper {
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.6rem 0.8rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.05s;
+  color: #fff;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+.entregado {
+  background: #2e7d32;
+}
+.entregado:not(:disabled):hover {
+  background: #1b5e20;
+}
+
+.ausente {
+  background: #757575;
+}
+.ausente:not(:disabled):hover {
+  background: #424242;
+}
+
+.cancelado {
+  background: #c62828;
+}
+.cancelado:not(:disabled):hover {
+  background: #8e0000;
+}
+
+.errorLocal {
+  margin: 0.5rem 0 0 0;
+  padding: 0.5rem 0.75rem;
+  background: #ffebee;
+  color: #b71c1c;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  white-space: pre-line;
+}

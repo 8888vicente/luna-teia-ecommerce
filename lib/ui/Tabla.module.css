@@ -1,0 +1,84 @@
+/*
+ * lib/ui/Tabla.module.css
+ * Estilo base para TODAS las tablas de la app.
+ * Variables CSS en globals.css: --color-fondo, --color-texto, etc.
+ */
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid var(--color-borde, #ebe5e0);
+  border-radius: 12px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  color: var(--color-texto, #2a2a2a);
+}
+
+.table th,
+.table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--color-borde-sutil, #f4ede7);
+  vertical-align: middle;
+}
+
+.table th {
+  background: var(--color-fondo-2, #fffaf5);
+  color: var(--color-texto-suave, #6b5b50);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-borde, #ebe5e0);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table tbody tr:hover {
+  background: var(--color-fondo-2, #fffaf5);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tfoot td {
+  background: var(--color-fondo-2, #fffaf5);
+  border-top: 2px solid var(--color-acento, #c9a87c);
+  font-weight: 600;
+}
+
+/* Variante densa: padding más pequeño, fuente más chica */
+.compact .table th,
+.compact .table td {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+/* Estados */
+.loading,
+.empty {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--color-texto-suave, #6b5b50);
+}
+
+.empty {
+  color: var(--color-texto-suave, #8a7970);
+  background: var(--color-fondo-2, #fffaf5);
+}
+
+.error {
+  padding: 1rem;
+  background: #fdecea;
+  color: #8a2a1f;
+  border-radius: 0;
+  margin: 0;
+}

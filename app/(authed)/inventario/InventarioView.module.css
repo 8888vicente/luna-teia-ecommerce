@@ -1,0 +1,178 @@
+/* ── Grid de paneles ─────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Panel ──────────────────────────── */
+.panel {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.panelTitle {
+  font-size: 1.15rem;
+  margin: 0 0 0.75rem 0;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.panelCount {
+  font-size: 0.8rem;
+  color: #999;
+  font-weight: 400;
+}
+
+/* ── Filtro repartidor ──────────────── */
+.filtroRepartidor {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.filtroRepartidor label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #666;
+  white-space: nowrap;
+}
+
+.filterSelect {
+  flex: 1;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: #fff;
+  cursor: pointer;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: #d50000;
+  box-shadow: 0 0 0 2px rgba(213, 0, 0, 0.1);
+}
+
+/* ── Busqueda ───────────────────────── */
+.searchBox {
+  margin-bottom: 0.75rem;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #d50000;
+  box-shadow: 0 0 0 2px rgba(213, 0, 0, 0.1);
+}
+/* ── Alertas ────────────────────────── */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #fff8e1;
+  border: 1px solid #ffe0b2;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.alertIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.alertList {
+  margin: 0.4rem 0 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.85rem;
+  color: #e65100;
+}
+
+/* ── Tabla ──────────────────────────── */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.55rem 0.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.table th {
+  background: #fafafa;
+  font-weight: 600;
+  color: #555;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.colRight {
+  text-align: right;
+}
+
+.family {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.familyHint {
+  color: #aaa;
+  font-size: 0.75rem;
+}
+
+/* ── Stock badges ──────────────────── */
+.stockBadge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.stockLow {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.emptyRow {
+  text-align: center;
+  color: #aaa;
+  padding: 1.5rem !important;
+}
+

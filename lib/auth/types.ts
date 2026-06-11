@@ -77,3 +77,7 @@ export class AuthError extends Error {
     this.name = 'AuthError';
   }
 }
+
+export type ActionResult<T = void> =
+  | { ok: true; data: T }
+  | { ok: false; error: string; code?: string };

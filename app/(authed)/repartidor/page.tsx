@@ -23,10 +23,24 @@ export default async function RepartidorPage() {
     redirect('/login?next=/repartidor');
   }
 
-  // claims vienen en app_metadata
+
+  // claims vienen en app_metadata, pero el Custom Access Token Hook
+  // los anida dentro de app_metadata.app_metadata.
+  // Buscamos en ambos niveles.
   const appMeta = (user.app_metadata ?? {}) as Record<string, unknown>;
-  const repartidorId = (appMeta.repartidor_id as string | null) ?? null;
-  const rol = (appMeta.role as string | null) ?? null;
+
+
+  const appMetaInner = (appMeta.app_metadata as Record<string, unknown> | undefined) ?? {};
+
+  const rol =
+    (appMetaInner.role as string | null | undefined) ??
+    (appMeta.role as string | null | undefined) ??
+    null;
+
+  const repartidorId =
+    (appMetaInner.repartidor_id as string | null | undefined) ??
+    (appMeta.repartidor_id as string | null | undefined) ??
+    null;
 
   if (rol !== 'Repartidor' || !repartidorId) {
     return (

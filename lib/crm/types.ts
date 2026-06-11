@@ -1,21 +1,17 @@
 /**
  * Tipos estrictos del módulo CRM.
- * Reflejan el schema SQL de los 4 archivos de migración.
- *
- * Convención: usamos `type` (no `interface`) para que sean
- * interseccibles y compatibles con utility types de TS.
+ * Reflejan el schema REAL de la BD de Luna Teia
+ * (verificado en information_schema el 2026-06-09).
  */
 
 // =============================================
 // ENUMS (espejo de los CHECK constraints de SQL)
 // =============================================
-export type RepartidorEstatus = 'postulado' | 'activo' | 'inactivo';
-
-export type PedidoOrigenVenta = 'facebook' | 'ecommerce' | 'kiosk';
+export type PedidoEstatus = 'pendiente' | 'en_ruta' | 'entregado' | 'ausente' | 'cancelado';
 
 export type PedidoTipoEntrega = 'reparto_local' | 'paqueteria_nacional';
 
-export type PedidoEstatus = 'pendiente' | 'en_ruta' | 'entregado' | 'ausente' | 'cancelado';
+export type PedidoMetodoPago = 'efectivo' | 'transferencia' | 'tarjeta_mercado_pago';
 
 export type TipoMovimientoInventario =
   | 'carga_dhl'
@@ -23,25 +19,25 @@ export type TipoMovimientoInventario =
   | 'devolucion_cancelado'
   | 'ajuste_auditoria';
 
-export type CrmRol = 'Administrador' | 'Repartidor';
+export type CrmRol = 'Administrador' | 'Vendedor' | 'Repartidor';
+
+export type EstatusReparto = 'pendiente' | 'asignado' | 'en_camino' | 'entregado' | 'fallido';
 
 // =============================================
-// CIUDADES (restricción CHECK de repartidores.ciudad)
+// CIUDADES
 // =============================================
-export type CiudadOperacion = 'Mexicali' | 'Hermosillo';
+export type CiudadOperacion = string;
 
 // =============================================
-// FILAS DE TABLAS (Insert / Row / Update)
+// REPARTIDORES (schema real de la BD)
 // =============================================
 export type RepartidorRow = {
   id: string;
   nombre: string;
   telefono: string;
   ciudad: CiudadOperacion;
-  estatus: RepartidorEstatus;
-  doc_ine_url: string | null;
-  doc_licencia_url: string | null;
-  doc_antecedentes_url: string | null;
+  activo: boolean;
+  user_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -54,18 +50,26 @@ export type RepartidorInsert = Omit<RepartidorRow, 'id' | 'created_at' | 'update
 
 export type RepartidorUpdate = Partial<RepartidorInsert>;
 
+// =============================================
+// PEDIDOS CENTRAL (schema real de la BD)
+// =============================================
 export type PedidoCentralRow = {
   id: string;
   cliente_nombre: string;
-  whatsapp: string;
+  cliente_telefono: string;
   direccion: string;
-  latitud: number | null;
-  longitud: number | null;
-  origen_venta: PedidoOrigenVenta;
-  tipo_entrega: PedidoTipoEntrega;
+  ciudad: string;
+  referencias: string | null;
+  link_maps: string | null;
+  metodo_pago: PedidoMetodoPago;
+  notas_repartidor: string | null;
   estatus_pedido: PedidoEstatus;
+  tipo_entrega: PedidoTipoEntrega;
+  estatus_reparto: EstatusReparto;
   orden_ruta: number | null;
-  dhl_tracking_number: string | null;
+  monto_pagado: number | null;
+  fecha_pago: string | null;
+  envio_id: string | null;
   repartidor_assigned_id: string | null;
   created_at: string;
   updated_at: string;
@@ -79,6 +83,9 @@ export type PedidoCentralInsert = Omit<PedidoCentralRow, 'id' | 'created_at' | '
 
 export type PedidoCentralUpdate = Partial<PedidoCentralInsert>;
 
+// =============================================
+// PEDIDO ITEMS
+// =============================================
 export type PedidoItemRow = {
   id: string;
   pedido_id: string;
@@ -95,6 +102,9 @@ export type PedidoItemInsert = Omit<PedidoItemRow, 'id' | 'created_at' | 'comisi
   comision_repartidor?: number | null;
 };
 
+// =============================================
+// INVENTARIO / MOVIMIENTOS
+// =============================================
 export type InventarioCampoRow = {
   id: string;
   repartidor_id: string;
@@ -122,8 +132,6 @@ export type PedidoConItems = PedidoCentralRow & {
 };
 
 export type InventarioConProducto = InventarioCampoRow & {
-  // Join con la tabla products del e-commerce.
-  // Si la columna no existe en tu `products`, elimina este campo.
   products?: {
     name: string;
     color_hex: string;
@@ -143,14 +151,14 @@ export type ValidacionStockRow = {
 };
 
 // =============================================
-// RESPUESTAS GENÉRICAS (para Server Actions)
+// RESPUESTAS GENÉRICAS
 // =============================================
 export type ActionResult<T = void> =
   | { ok: true; data: T }
   | { ok: false; error: string; code?: string };
 
 // =============================================
-// CLAIMS DEL JWT (app_metadata inyectado en script 04)
+// CLAIMS DEL JWT
 // =============================================
 export type CrmClaims = {
   role: CrmRol | null;
@@ -158,57 +166,35 @@ export type CrmClaims = {
 };
 
 // =============================================
-// DASHBOARD ADMIN — Tipos para el panel /admin/crm
+// DASHBOARD ADMIN — Tipos para /admin/crm
 // =============================================
-
-/**
- * Pedido global con sus items y, opcionalmente, los
- * datos del repartidor asignado (join externo vía repartidores).
- */
 export type PedidoGlobal = PedidoCentralRow & {
   pedido_items: PedidoItemRow[];
   repartidor: Pick<RepartidorRow, 'id' | 'nombre' | 'ciudad' | 'telefono'> | null;
   total_pedido: number;
 };
 
-/**
- * Resumen de comisiones por repartidor en un periodo.
- * Una fila = un repartidor activo.
- */
 export type ComisionResumenRow = {
   repartidor_id: string;
   repartidor_nombre: string;
   ciudad: CiudadOperacion;
   pedidos_entregados: number;
-  total_vendido: number;        // SUM(precio_unitario * cantidad) de pedidos 'entregado'
-  comision_total: number;       // SUM(comision_repartidor) — calculada por trigger script 02
+  total_vendido: number;
+  comision_total: number;
 };
 
-/**
- * Gran total agregado del panel financiero.
- */
 export type ComisionResumenTotales = {
   total_vendido_global: number;
   total_comisiones_global: number;
-  utilidad_bruta: number;       // total_vendido - total_comisiones
+  utilidad_bruta: number;
   pedidos_entregados_global: number;
 };
 
-/**
- * Rango temporal aceptado por getResumenComisiones().
- *  - 'mes_actual'         : desde el día 1 del mes corriente.
- *  - 'ultimos_7_dias'     : últimos 7 días naturales.
- *  - 'ultimos_30_dias'    : últimos 30 días naturales.
- */
 export type ComisionPeriodo = 'mes_actual' | 'ultimos_7_dias' | 'ultimos_30_dias';
 
-/**
- * Estructura completa que devuelve getResumenComisiones().
- */
 export type ResumenComisiones = {
   periodo: ComisionPeriodo;
   rango: { desde: string; hasta: string };
   por_repartidor: ComisionResumenRow[];
   totales: ComisionResumenTotales;
 };
-

@@ -11,12 +11,12 @@
 
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { signInAction } from "@/lib/auth/client";
 import styles from "./login.module.css";
 
-export default function LoginPage() {
+function LoginForm() {
   const search = useSearchParams();
   const router = useRouter();
   const next = search.get("next") ?? "";
@@ -106,5 +106,20 @@ export default function LoginPage() {
         </footer>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <main className={styles.wrap}>
+        <div className={styles.card} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px' }}>
+          <div style={{ width: 30, height: 30, border: '3px solid #E53935', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      </main>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -78,14 +78,25 @@ export async function getSesion(): Promise<Sesion> {
   const appMeta = (user.app_metadata ?? {}) as Record<string, unknown>;
   const userMeta = (user.user_metadata ?? {}) as Record<string, unknown>;
 
-  const rawRol = (appMeta.role as string | null | undefined) ?? null;
+  // El Custom Access Token Hook anida app_metadata dentro de app_metadata.
+  // Primero buscamos en app_metadata.app_metadata.role (anidado del hook),
+  // y si no está, caemos a app_metadata.role (directo).
+  const appMetaInner = (appMeta.app_metadata as Record<string, unknown> | undefined) ?? {};
+
+  const rawRol =
+    (appMetaInner.role as string | null | undefined) ??
+    (appMeta.role as string | null | undefined) ??
+    null;
+
   const rol: AppRol | null =
     rawRol && (ROLES_VALIDOS as readonly string[]).includes(rawRol)
       ? (rawRol as AppRol)
       : null;
 
   const repartidorId =
-    (appMeta.repartidor_id as string | null | undefined) ?? null;
+    (appMetaInner.repartidor_id as string | null | undefined) ??
+    (appMeta.repartidor_id as string | null | undefined) ??
+    null;
 
   // Si el rol no es válido, NO construimos SesionApp: devolvemos
   // sesión anónima para que el guard mande al usuario a /login.

@@ -101,7 +101,7 @@ export function ListaEntregas({ initialPedidos }: Props) {
 
             <h2 className={styles.cliente}>{pedido.cliente_nombre}</h2>
             <p className={styles.direccion}>📍 {pedido.direccion}</p>
-            <p className={styles.whatsapp}>💬 {pedido.whatsapp}</p>
+            <p className={styles.whatsapp}>💬 {pedido.cliente_telefono}</p>
 
             <div className={styles.items}>
               <strong>Productos:</strong>

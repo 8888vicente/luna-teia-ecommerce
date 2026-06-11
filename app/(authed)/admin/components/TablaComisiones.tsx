@@ -3,12 +3,10 @@
 /**
  * TablaComisiones — Client Component
  * Muestra las comisiones acumuladas por repartidor en
- * los últimos 7 días, calculadas a partir de los
- * pedido_items de pedidos ya entregados.
+ * los últimos 7 días.
  *
- * Usa getSupabaseService() indirectamente vía una
- * server action (no en este archivo) para no exponer
- * la SERVICE KEY al bundle del cliente.
+ * La query va por pedidos_central -> pedido_items -> repartidores
+ * para respetar el schema real de la BD.
  */
 import { useEffect, useState } from 'react';
 import { getSupabaseBrowser } from '@/lib/supabase/client';
@@ -33,28 +31,28 @@ export function TablaComisiones() {
 
       const hace7dias = new Date();
       hace7dias.setDate(hace7dias.getDate() - 7);
+      const hace7diasStr = hace7dias.toISOString();
 
-      // Query agregada: trae repartidores con join a
-      // pedido_items cuyo pedido esté 'entregado' en los
-      // últimos 7 días. Como cliente autenticado con rol
-      // Administrador, la RLS permite leer todo.
-      const { data, error: e } = await supabase
-        .from('repartidores')
+      // 1) Traer pedidos_central con estatus=entregado, con su repartidor y items
+      const { data: pedidos, error: e } = await supabase
+        .from('pedidos_central')
         .select(
           `
           id,
-          nombre,
-          ciudad,
-          pedido_items:pedido_items!inner (
-            comision_repartidor,
-            pedido:pedido_id!inner (
-              estatus_pedido,
-              updated_at
-            )
+          repartidor_assigned_id,
+          updated_at,
+          repartidor:repartidor_assigned_id!inner (
+            id,
+            nombre,
+            ciudad
+          ),
+          pedido_items (
+            comision_repartidor
           )
         `
         )
-        .eq('estatus', 'activo');
+        .eq('estatus_pedido', 'entregado')
+        .gte('updated_at', hace7diasStr);
 
       if (e) {
         setError(e.message);
@@ -62,28 +60,33 @@ export function TablaComisiones() {
         return;
       }
 
-      const agregadas: FilaComision[] = (data ?? []).map((r: any) => {
-        const comFiltradas = (r.pedido_items ?? []).filter(
-          (it: any) =>
-            it.pedido?.estatus_pedido === 'entregado' &&
-            new Date(it.pedido.updated_at) >= hace7dias &&
-            it.comision_repartidor !== null
-        );
-        const total = comFiltradas.reduce(
-          (acc: number, it: any) => acc + Number(it.comision_repartidor ?? 0),
-          0
-        );
-        return {
-          repartidor_id: r.id,
+      // 2) Agrupar por repartidor
+      const mapa = new Map<string, FilaComision>();
+
+      for (const p of pedidos ?? []) {
+        const r: any = (p as any).repartidor;
+        if (!r) continue;
+
+        const repId = r.id;
+        const existente = mapa.get(repId) ?? {
+          repartidor_id: repId,
           repartidor_nombre: r.nombre,
           ciudad: r.ciudad,
-          pedidos_entregados: new Set(
-            comFiltradas.map((it: any) => it.pedido?.id)
-          ).size,
-          total_comision: total,
+          pedidos_entregados: 0,
+          total_comision: 0,
         };
-      });
 
+        existente.pedidos_entregados += 1;
+
+        const items: any[] = (p as any).pedido_items ?? [];
+        for (const item of items) {
+          existente.total_comision += Number(item.comision_repartidor ?? 0);
+        }
+
+        mapa.set(repId, existente);
+      }
+
+      const agregadas = Array.from(mapa.values());
       agregadas.sort((a, b) => b.total_comision - a.total_comision);
       setFilas(agregadas);
       setLoading(false);
@@ -111,7 +114,7 @@ export function TablaComisiones() {
             <th>Repartidor</th>
             <th>Ciudad</th>
             <th>Entregas (7d)</th>
-            <th>Comisión total</th>
+            <th>Comisi&oacute;n total</th>
           </tr>
         </thead>
         <tbody>

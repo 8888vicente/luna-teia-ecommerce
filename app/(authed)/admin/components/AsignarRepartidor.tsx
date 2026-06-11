@@ -57,8 +57,10 @@ export function AsignarRepartidor({ initialPedidos, repartidores }: Props) {
         <thead>
           <tr>
             <th>Cliente</th>
-            <th>WhatsApp</th>
-            <th>Origen</th>
+
+
+            <th>Tel&eacute;fono</th>
+            <th>Ciudad</th>
             <th>Tipo entrega</th>
             <th>Asignar a</th>
             <th>Estado</th>
@@ -74,12 +76,8 @@ export function AsignarRepartidor({ initialPedidos, repartidores }: Props) {
                   <br />
                   <small>{p.direccion}</small>
                 </td>
-                <td>{p.whatsapp}</td>
-                <td>
-                  <span className={`${styles.tag} ${styles[p.origen_venta]}`}>
-                    {p.origen_venta}
-                  </span>
-                </td>
+                <td>{p.cliente_telefono}</td>
+                <td>{p.ciudad}</td>
                 <td>
                   <span className={`${styles.tag} ${styles[p.tipo_entrega]}`}>
                     {p.tipo_entrega === 'reparto_local'

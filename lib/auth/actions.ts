@@ -54,13 +54,41 @@ export async function signInAction(formData: FormData): Promise<SignInResult> {
     };
   }
 
-  // 2) Leer el rol desde app_metadata del usuario recien logueado.
-  //    El cliente del usuario YA conoce su app_metadata tras signIn.
-  const appMeta = (signInData.user.app_metadata ?? {}) as Record<string, unknown>;
-  const rolRaw = (appMeta.role as string | null | undefined) ?? null;
+  // 2) Obtener el usuario DESPUES de que el Custom Access Token Hook
+  //    haya inyectado app_metadata.role y app_metadata.repartidor_id
+  //    en el JWT. signInWithPassword devuelve el usuario antes de
+  //    que el hook se ejecute; getUser() hace un viaje de ida y vuelta
+  //    al servidor de auth y recibe el JWT YA procesado por el hook.
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  if (userError || !userData?.user) {
+    await supabase.auth.signOut();
+    return {
+      ok: false,
+      error:
+        userError?.message ??
+        "No se pudo verificar la sesion tras el login. Intenta de nuevo.",
+    };
+  }
+
+  // El Custom Access Token Hook devuelve { claims: { app_metadata: { role, repartidor_id } } }
+  // y Supabase mete ese objeto DENTRO de app_metadata existente, resultando en:
+  //   user.app_metadata.app_metadata.role
+  // Por eso NO leemos user.app_metadata.role directamente, sino que buscamos
+  // en user.app_metadata.app_metadata.role como prioridad.
+  const appMeta = (userData.user.app_metadata ?? {}) as Record<string, unknown>;
+  const appMetaInner = (appMeta.app_metadata as Record<string, unknown> | undefined) ?? {};
+
+  const rolRaw =
+    (appMetaInner.role as string | null | undefined) ??
+    (appMeta.role as string | null | undefined) ??
+    null;
 
   if (!rolRaw) {
-    // Logueado pero sin rol: lo deslogueamos y devolvemos error
+    // Logueado pero sin rol en app_metadata: lo deslogueamos
+    // y devolvemos error. Esto puede pasar si:
+    //   - El usuario no esta en crm_usuarios_roles (no tiene rol asignado)
+    //   - El Custom Access Token Hook fallo (revisar logs en Dashboard)
     await supabase.auth.signOut();
     return {
       ok: false,

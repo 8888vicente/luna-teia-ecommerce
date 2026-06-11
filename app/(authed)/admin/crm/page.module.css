@@ -1,0 +1,69 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #d50000;
+  padding-bottom: 1rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* ── KPIs ──────────────────────────── */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.kpiCard {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.kpiValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #d50000;
+  line-height: 1;
+}
+
+.kpiLabel {
+  font-size: 0.85rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Secciones ─────────────────────── */
+.section {
+  margin-bottom: 3rem;
+}
+
+.section h2 {
+  font-size: 1.35rem;
+  margin: 0 0 1rem 0;
+  color: #1a1a1a;
+}

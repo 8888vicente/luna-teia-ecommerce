@@ -1,0 +1,51 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #d50000;
+  padding-bottom: 1rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* ── Section ───────────────────────── */
+.section {
+  margin-bottom: 3rem;
+}
+
+.section h2 {
+  font-size: 1.35rem;
+  margin: 0 0 1rem 0;
+  color: #1a1a1a;
+}
+
+/* ── Empty ─────────────────────────── */
+.empty {
+  padding: 2rem;
+  text-align: center;
+  background: #fafafa;
+  border-radius: 8px;
+  color: #888;
+}
+
+.emptyHint {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  color: #bbb;
+}
+

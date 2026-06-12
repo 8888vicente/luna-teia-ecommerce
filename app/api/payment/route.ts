@@ -12,6 +12,7 @@ const SHIPPING_COST = 150;
 
 export async function POST(request: Request) {
   try {
+    const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').replace(/\/+$/, '');
     const body = await request.json();
     const rawItems: { id: string; name: string; price: number; quantity: number }[] = Array.isArray(body?.items) ? body.items : [];
     const shippingInfo = body?.shipping_info || {};
@@ -115,12 +116,12 @@ export async function POST(request: Request) {
           phone: { number: shippingInfo.phone },
         },
         back_urls: {
-          success: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/checkout/success`,
-          failure: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/checkout/failure`,
-          pending: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/checkout/pending`,
+          success: `${baseUrl}/checkout/success`,
+          failure: `${baseUrl}/checkout/failure`,
+          pending: `${baseUrl}/checkout/pending`,
         },
         auto_return: 'approved',
-        notification_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://tudominio.com'}/api/webhooks/mercadopago`,
+        notification_url: `${baseUrl}/api/webhooks/mercadopago`,
         external_reference: orderId,
       },
     });

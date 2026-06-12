@@ -8,7 +8,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { getSupabaseService } from '@/lib/supabase/service';
+import { getSupabaseServer } from '@/lib/supabase/server';
 import { requireRol } from '@/lib/auth';
 import type { ActionResult } from '../crm/types';
 
@@ -32,7 +32,7 @@ export async function crearRepartidorAction(
     return { ok: false, error: (err as Error).message };
   }
 
-  const supabase = getSupabaseService();
+  const supabase = await getSupabaseServer();
 
   const { error } = await supabase
     .from('repartidores')
@@ -67,7 +67,7 @@ export async function editarRepartidorAction(
     return { ok: false, error: (err as Error).message };
   }
 
-  const supabase = getSupabaseService();
+  const supabase = await getSupabaseServer();
 
   const { error } = await supabase
     .from('repartidores')

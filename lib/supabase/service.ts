@@ -36,3 +36,16 @@ export function getSupabaseService(): SupabaseClient {
 
   return serviceClient;
 }
+
+/**
+ * Obtiene el cliente de servicio si la clave está configurada,
+ * o cae al cliente fallback (con cookies RLS) si no lo está.
+ * Esto evita caídas del servidor si falta la variable de entorno.
+ */
+export function getSupabaseAdminClient(fallbackClient: SupabaseClient): SupabaseClient {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) {
+    return fallbackClient;
+  }
+  return getSupabaseService();
+}

@@ -8,7 +8,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { getSupabaseService } from '@/lib/supabase/service';
+import { getSupabaseServer } from '@/lib/supabase/server';
+import { getSupabaseAdminClient } from '@/lib/supabase/service';
 import { requireRol } from '@/lib/auth';
 import type { ActionResult, PedidoCentralUpdate } from '../crm/types';
 import { getPedidosParaRuta } from '@/lib/reparto/queries';
@@ -27,7 +28,8 @@ export async function modificarPedidoAction(
     return { ok: false, error: (err as Error).message };
   }
 
-  const supabase = getSupabaseService();
+  const serverClient = await getSupabaseServer();
+  const supabase = getSupabaseAdminClient(serverClient);
 
   const updateData: PedidoCentralUpdate = { ...datos };
 
@@ -69,7 +71,8 @@ export async function cancelarPedidoAdminAction(
     return { ok: false, error: (err as Error).message };
   }
 
-  const supabase = getSupabaseService();
+  const serverClient = await getSupabaseServer();
+  const supabase = getSupabaseAdminClient(serverClient);
 
   const { data: pedido, error: fetchError } = await supabase
     .from('pedidos_central')
@@ -114,6 +117,7 @@ export async function getPedidosParaSupervisorAction(
     return { ok: false, error: (err as Error).message };
   }
 
-  const supabase = getSupabaseService();
+  const serverClient = await getSupabaseServer();
+  const supabase = getSupabaseAdminClient(serverClient);
   return getPedidosParaRuta(supabase, repartidorId);
 }

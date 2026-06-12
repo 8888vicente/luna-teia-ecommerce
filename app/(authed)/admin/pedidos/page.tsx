@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getSesion } from '@/lib/auth';
-import { getSupabaseService } from '@/lib/supabase/service';
+import { getSupabaseServer } from '@/lib/supabase/server';
+import { getSupabaseAdminClient } from '@/lib/supabase/service';
 import { PedidosEditor } from './PedidosEditor';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +13,8 @@ export default async function AdminPedidosPage() {
     redirect('/login');
   }
 
-  const supabase = getSupabaseService();
+  const serverClient = await getSupabaseServer();
+  const supabase = getSupabaseAdminClient(serverClient);
 
   // Cargar los últimos 150 pedidos con sus productos asociados y detalles de producto
   const { data: pedidos, error: pedError } = await supabase

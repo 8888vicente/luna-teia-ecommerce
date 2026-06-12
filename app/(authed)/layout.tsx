@@ -36,7 +36,7 @@ const NAV: readonly NavItem[] = [
   { href: "/admin/crm", label: "Panel general",  icon: "\u{1F4CA}", roles: ["Administrador"] },
   { href: "/admin/pedidos", label: "Pedidos",    icon: "\u{1F4E6}", roles: ["Administrador"] },
   { href: "/admin/repartidores", label: "Repartidores",   icon: "\u{1F697}", roles: ["Administrador"] },
-  { href: "/admin/envios", label: "Env&iacute;os",       icon: "\u{1F69A}", roles: ["Administrador"] },
+  { href: "/admin/envios", label: "Envíos",       icon: "\u{1F69A}", roles: ["Administrador"] },
   { href: "/admin/crm", label: "Finanzas",       icon: "\u{1F4B0}", roles: ["Administrador"] },
   { href: "/vendedor",   label: "Capturar venta", icon: "\u{1F4DD}", roles: ["Vendedor"] },
   { href: "/vendedor/ventas", label: "Ver ventas",    icon: "\u{1F4CA}", roles: ["Vendedor"] },

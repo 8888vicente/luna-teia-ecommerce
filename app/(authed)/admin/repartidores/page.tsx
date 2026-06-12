@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getSesion } from '@/lib/auth';
-import { getSupabaseService } from '@/lib/supabase/service';
+import { getSupabaseServer } from '@/lib/supabase/server';
+import { getSupabaseService, getSupabaseAdminClient } from '@/lib/supabase/service';
 import { RepartidoresList } from './RepartidoresList';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +13,8 @@ export default async function AdminRepartidoresPage() {
     redirect('/login');
   }
 
-  const supabase = getSupabaseService();
+  const serverClient = await getSupabaseServer();
+  const supabase = getSupabaseAdminClient(serverClient);
 
   // Consulta todos los repartidores ordenados por ciudad y nombre
   const { data: repartidores, error: repError } = await supabase
@@ -34,13 +36,19 @@ export default async function AdminRepartidoresPage() {
   // para permitir asociar cuentas a los repartidores
   let authUsers: { id: string; email?: string; name?: string }[] = [];
   try {
-    const { data: { users }, error: authError } = await supabase.auth.admin.listUsers();
-    if (!authError && users) {
-      authUsers = users.map((u) => ({
-        id: u.id,
-        email: u.email,
-        name: u.user_metadata?.full_name || u.email,
-      }));
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (serviceKey) {
+      const supabaseService = getSupabaseService();
+      const { data: { users }, error: authError } = await supabaseService.auth.admin.listUsers();
+      if (!authError && users) {
+        authUsers = users.map((u) => ({
+          id: u.id,
+          email: u.email,
+          name: u.user_metadata?.full_name || u.email,
+        }));
+      }
+    } else {
+      console.warn('SUPABASE_SERVICE_ROLE_KEY no está configurada en el servidor. Asignación de cuentas auth desactivada.');
     }
   } catch (err) {
     console.error('Error al listar usuarios de Supabase Auth en página admin:', err);

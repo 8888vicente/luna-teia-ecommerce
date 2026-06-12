@@ -9,6 +9,7 @@
 
 import { redirect } from "next/navigation";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/service";
 import { getSesion } from "@/lib/auth";
 import { AsignarRepartidor } from "../components/AsignarRepartidor";
 import { TablaComisiones } from "../components/TablaComisiones";
@@ -25,7 +26,8 @@ export default async function AdminCrmPage() {
     redirect("/login");
   }
 
-  const supabase = await getSupabaseServer();
+  const serverClient = await getSupabaseServer();
+  const supabase = getSupabaseAdminClient(serverClient);
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 

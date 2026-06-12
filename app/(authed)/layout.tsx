@@ -19,6 +19,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { getSesion } from "@/lib/auth";
 import type { AppRol } from "@/lib/auth";
+import { getSupabaseServer } from "@/lib/supabase/server";
 import styles from "./layout.module.css";
 
 // =============================================
@@ -32,12 +33,8 @@ type NavItem = {
 };
 
 const NAV: readonly NavItem[] = [
-
-
-
-
   { href: "/admin/crm", label: "Panel general",  icon: "\u{1F4CA}", roles: ["Administrador"] },
-  { href: "/admin/crm", label: "Pedidos",        icon: "\u{1F4E6}", roles: ["Administrador"] },
+  { href: "/admin/pedidos", label: "Pedidos",    icon: "\u{1F4E6}", roles: ["Administrador"] },
   { href: "/admin/repartidores", label: "Repartidores",   icon: "\u{1F697}", roles: ["Administrador"] },
   { href: "/admin/envios", label: "Env&iacute;os",       icon: "\u{1F69A}", roles: ["Administrador"] },
   { href: "/admin/crm", label: "Finanzas",       icon: "\u{1F4B0}", roles: ["Administrador"] },
@@ -48,7 +45,6 @@ const NAV: readonly NavItem[] = [
   { href: "/repartidor/inventario", label: "Mi inventario", icon: "\u{1F4E6}", roles: ["Repartidor"] },
   { href: "/repartidor", label: "Mi cartera",     icon: "\u{1F4B5}", roles: ["Repartidor"] },
 ];
-
 
 // =============================================
 // Initials helper para el avatar
@@ -80,6 +76,26 @@ export default async function AuthedLayout({
     redirect(`/login?next=${next}`);
   }
 
+  // ── Consulta de cancelaciones de hoy para el badge ──
+  let cancelacionesHoy = 0;
+  if (sesion.rol === "Administrador") {
+    try {
+      const supabase = await getSupabaseServer();
+      const midnight = new Date();
+      midnight.setHours(0, 0, 0, 0);
+      
+      const { count } = await supabase
+        .from("pedidos_central")
+        .select("id", { count: "exact", head: true })
+        .eq("estatus_pedido", "cancelado")
+        .gte("updated_at", midnight.toISOString());
+      
+      cancelacionesHoy = count ?? 0;
+    } catch (err) {
+      console.error("Error al cargar cancelaciones en el sidebar layout:", err);
+    }
+  }
+
   const itemsVisibles = NAV.filter((n) => n.roles.includes(sesion.rol));
 
   return (
@@ -95,13 +111,22 @@ export default async function AuthedLayout({
         </div>
 
         <nav className={styles.nav}>
-          {itemsVisibles.map((item, idx) => (
-            <Link key={idx} href={item.href} className={styles.navItem}>
-              <span className={styles.navIcon} aria-hidden="true">{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          ))}
+          {itemsVisibles.map((item, idx) => {
+            const showBadge = item.label === "Pedidos" && cancelacionesHoy > 0;
+            return (
+              <Link key={idx} href={item.href} className={styles.navItem}>
+                <span className={styles.navIcon} aria-hidden="true">{item.icon}</span>
+                <span>{item.label}</span>
+                {showBadge && (
+                  <span className={styles.badgeAlerta} aria-label={`${cancelacionesHoy} pedidos cancelados hoy`}>
+                    {cancelacionesHoy}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
         </nav>
+
 
         <div className={styles.userBox}>
           <div className={styles.avatar} aria-hidden="true">

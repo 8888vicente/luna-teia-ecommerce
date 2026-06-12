@@ -1,0 +1,301 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.selectorGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.selectorGroup label {
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.select {
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--color-borde, #ebe5e0);
+  border-radius: 8px;
+  background: white;
+  font-size: 0.9rem;
+  outline: none;
+  min-width: 240px;
+}
+
+.select:focus {
+  border-color: #c9a87c;
+}
+
+.loadingSpinner {
+  color: #c9a87c;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.idleState,
+.emptyState,
+.errorBox {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  border-radius: 12px;
+  border: 1px dashed var(--color-borde, #ebe5e0);
+  background-color: #fcfbfa;
+  color: #64748b;
+  font-size: 0.9rem;
+  max-width: 600px;
+  margin: 2rem auto;
+  line-height: 1.5;
+}
+
+.errorBox {
+  border-color: #fca5a5;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-style: solid;
+}
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* KPIs Grid */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .kpiGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .kpiGrid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.kpiCard {
+  background: white;
+  border: 1px solid var(--color-borde, #ebe5e0);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01);
+}
+
+.kpiLabel {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.kpiValue {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.successCard {
+  border-left: 4px solid #10b981;
+}
+
+.successCard .kpiValue {
+  color: #065f46;
+}
+
+.pendingCard {
+  border-left: 4px solid #3b82f6;
+}
+
+.pendingCard .kpiValue {
+  color: #1d4ed8;
+}
+
+.errorCard {
+  border-left: 4px solid #ef4444;
+}
+
+.errorCard .kpiValue {
+  color: #991b1b;
+}
+
+.absentCard {
+  border-left: 4px solid #64748b;
+}
+
+.absentCard .kpiValue {
+  color: #334155;
+}
+
+/* Map Section Grid */
+.mapSection {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .mapSection {
+    grid-template-columns: 1fr 300px;
+  }
+}
+
+.mapContainer {
+  min-height: 450px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Stops List side panel */
+.stopsList {
+  background: white;
+  border: 1px solid var(--color-borde, #ebe5e0);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  max-height: 450px;
+  overflow: hidden;
+}
+
+.listHeader {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--color-borde-sutil, #f4ede7);
+  background-color: #fbf9f7;
+}
+
+.listHeader h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.listContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.stopItem {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.stopItem:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.activeStop {
+  background-color: #eff6ff !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.stopNum {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stopInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.stopName {
+  font-size: 0.8rem;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stopAddress {
+  font-size: 0.72rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statusBadge {
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+/* Spinner */
+.mapLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background-color: #f8fafc;
+  color: #64748b;
+  font-size: 0.9rem;
+  height: 450px;
+  border-radius: 12px;
+  border: 1px solid var(--color-borde, #ebe5e0);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #c9a87c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

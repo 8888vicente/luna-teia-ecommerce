@@ -3,13 +3,8 @@
  *
  * Panel principal del CRM (Administrador).
  * Server Component: carga datos resumidos de pedidos,
- * repartidores y comisiones, y pasa los datos a los
- * componentes cliente para interaccion.
- *
- * Las subsecciones:
- *   1. Tarjetas de resumen (KPI)
- *   2. Pedidos pendientes de asignar
- *   3. Comisiones de la semana
+ * repartidores, incidencias y comisiones, y pasa los datos a los
+ * componentes cliente para interacción.
  */
 
 import { redirect } from "next/navigation";
@@ -17,6 +12,8 @@ import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSesion } from "@/lib/auth";
 import { AsignarRepartidor } from "../components/AsignarRepartidor";
 import { TablaComisiones } from "../components/TablaComisiones";
+import { RutaSupervisor } from "../components/RutaSupervisor";
+import { ActivityFeed } from "../components/ActivityFeed";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -29,51 +26,68 @@ export default async function AdminCrmPage() {
   }
 
   const supabase = await getSupabaseServer();
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
 
-  // ── 1. Cargar KPIs ─────────────────────────
-  const [resPendientes, resEnRuta, resEntregadosHoy, resRepartidores, resPedidos, resRepActivos] =
-    await Promise.all([
-      // Pedidos pendientes (sin repartidor asignado)
-      supabase
-        .from("pedidos_central")
-        .select("id", { count: "exact", head: true })
-        .eq("estatus_pedido", "pendiente")
-        .is("repartidor_assigned_id", null),
+  // Cargar datos en paralelo para optimizar performance
+  const [
+    resPendientes,
+    resEnRuta,
+    resEntregadosHoy,
+    resRepartidores,
+    resPedidos,
+    resRepActivos,
+    resIncidencias
+  ] = await Promise.all([
+    // Pedidos pendientes (sin repartidor asignado)
+    supabase
+      .from("pedidos_central")
+      .select("id", { count: "exact", head: true })
+      .eq("estatus_pedido", "pendiente")
+      .is("repartidor_assigned_id", null),
 
-      // Pedidos en ruta
-      supabase
-        .from("pedidos_central")
-        .select("id", { count: "exact", head: true })
-        .eq("estatus_pedido", "en_ruta"),
+    // Pedidos en ruta
+    supabase
+      .from("pedidos_central")
+      .select("id", { count: "exact", head: true })
+      .eq("estatus_pedido", "en_ruta"),
 
-      // Entregados hoy
-      supabase
-        .from("pedidos_central")
-        .select("id", { count: "exact", head: true })
-        .eq("estatus_pedido", "entregado")
-        .gte("updated_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
+    // Entregados hoy
+    supabase
+      .from("pedidos_central")
+      .select("id", { count: "exact", head: true })
+      .eq("estatus_pedido", "entregado")
+      .gte("updated_at", todayStart.toISOString()),
 
-      // Repartidores activos
-      supabase
-        .from("repartidores")
-        .select("id", { count: "exact", head: true })
-        .eq("activo", true),
+    // Repartidores activos (conteo)
+    supabase
+      .from("repartidores")
+      .select("id", { count: "exact", head: true })
+      .eq("activo", true),
 
-      // Pedidos pendientes + en_ruta (COMPLETOS para el componente AsignarRepartidor)
-      supabase
-        .from("pedidos_central")
-        .select("*")
-        .in("estatus_pedido", ["pendiente", "en_ruta"])
-        .order("created_at", { ascending: false })
-        .limit(50),
+    // Pedidos pendientes + en_ruta para AsignarRepartidor
+    supabase
+      .from("pedidos_central")
+      .select("*")
+      .in("estatus_pedido", ["pendiente", "en_ruta"])
+      .order("created_at", { ascending: false })
+      .limit(50),
 
-      // Repartidores activos (COMPLETOS para el componente AsignarRepartidor)
-      supabase
-        .from("repartidores")
-        .select("*")
-        .eq("activo", true)
-        .order("nombre"),
-    ]);
+    // Repartidores activos para dropdowns y supervisor
+    supabase
+      .from("repartidores")
+      .select("*")
+      .eq("activo", true)
+      .order("nombre"),
+
+    // Incidencias de hoy (cancelaciones o ausentes) con repartidor cargado
+    supabase
+      .from("pedidos_central")
+      .select("*, repartidor:repartidor_assigned_id(nombre)")
+      .in("estatus_pedido", ["cancelado", "ausente"])
+      .gte("updated_at", todayStart.toISOString())
+      .order("updated_at", { ascending: false })
+  ]);
 
   const kpi = {
     pendientes: resPendientes.count ?? 0,
@@ -84,19 +98,19 @@ export default async function AdminCrmPage() {
 
   const pedidos = resPedidos.data ?? [];
   const repartidores = resRepActivos.data ?? [];
+  const incidencias = resIncidencias.data ?? [];
 
   return (
     <main className={styles.container}>
-      {/* ── Header ─────────────────────────── */}
+      {/* Header */}
       <header className={styles.header}>
         <h1>Panel de control</h1>
         <p className={styles.subtitle}>
-          Bienvenido, <strong>{sesion.displayName}</strong>. Resumen general del
-          d&iacute;a.
+          Bienvenido, <strong>{sesion.displayName}</strong>. Resumen general del día.
         </p>
       </header>
 
-      {/* ── KPIs ───────────────────────────── */}
+      {/* KPIs */}
       <section className={styles.kpiGrid}>
         <article className={styles.kpiCard}>
           <span className={styles.kpiValue}>{kpi.pendientes}</span>
@@ -116,7 +130,18 @@ export default async function AdminCrmPage() {
         </article>
       </section>
 
-      {/* ── Asignar repartidor ──────────────── */}
+      {/* Alertas rojas y bitácora de incidencias */}
+      <section className={styles.section}>
+        <ActivityFeed incidencias={incidencias as any} repartidores={repartidores} />
+      </section>
+
+      {/* Mapa de supervisión de rutas */}
+      <section className={styles.section}>
+        <h2>Supervisión de Rutas en Vivo</h2>
+        <RutaSupervisor repartidores={repartidores} />
+      </section>
+
+      {/* Asignar repartidor */}
       <section className={styles.section}>
         <h2>Asignar repartidor</h2>
         <AsignarRepartidor
@@ -125,9 +150,9 @@ export default async function AdminCrmPage() {
         />
       </section>
 
-      {/* ── Comisiones ─────────────────────── */}
+      {/* Comisiones */}
       <section className={styles.section}>
-        <h2>Comisiones (&uacute;ltimos 7 d&iacute;as)</h2>
+        <h2>Comisiones (últimos 7 días)</h2>
         <TablaComisiones />
       </section>
     </main>

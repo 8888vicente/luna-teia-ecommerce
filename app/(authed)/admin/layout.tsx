@@ -29,8 +29,12 @@ export default async function AdminLayout({
 
   if (sesion.rol !== "Administrador") {
     // Redirigir al panel que SÍ le corresponde
-    const fallback =
-      sesion.rol === "Repartidor" ? "/repartidor" : "/login";
+    const targetByRol: Record<string, string> = {
+      Vendedor: "/vendedor",
+      Repartidor: "/repartidor",
+      Almacen: "/almacen",
+    };
+    const fallback = targetByRol[sesion.rol] ?? "/login";
     redirect(fallback);
   }
 

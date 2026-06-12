@@ -102,6 +102,7 @@ export async function signInAction(formData: FormData): Promise<SignInResult> {
     Administrador: "/admin/crm",
     Vendedor: "/vendedor",
     Repartidor: "/repartidor",
+    Almacen: "/almacen",
   };
 
   const fallback = targetByRol[rolRaw] ?? "/login";

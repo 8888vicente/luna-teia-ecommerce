@@ -27,7 +27,7 @@
  * NOTA: 'Cajero' y 'Almacen' se agregarán a este tipo cuando
  * se construyan sus módulos (YAGNI).
  */
-export type AppRol = 'Administrador' | 'Vendedor' | 'Repartidor';
+export type AppRol = 'Administrador' | 'Vendedor' | 'Repartidor' | 'Almacen';
 
 /**
  * Estructura mínima que necesita la app sobre el usuario actual.

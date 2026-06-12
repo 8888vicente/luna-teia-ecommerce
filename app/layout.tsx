@@ -37,10 +37,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Luna Teia — CRM',
-    template: '%s · Luna Teia',
-  },
+  title: 'Luna Teia',
   description:
     'Sistema de gestión de ventas, repartos y comisiones de Luna Teia Cosméticos.',
 };

@@ -29,6 +29,7 @@ const ROLES_VALIDOS: readonly AppRol[] = [
   'Administrador',
   'Vendedor',
   'Repartidor',
+  'Almacen',
 ] as const;
 
 /**

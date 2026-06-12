@@ -19,7 +19,7 @@ export type TipoMovimientoInventario =
   | 'devolucion_cancelado'
   | 'ajuste_auditoria';
 
-export type CrmRol = 'Administrador' | 'Vendedor' | 'Repartidor';
+export type CrmRol = 'Administrador' | 'Vendedor' | 'Repartidor' | 'Almacen';
 
 export type EstatusReparto = 'pendiente' | 'asignado' | 'en_camino' | 'entregado' | 'fallido';
 
@@ -71,6 +71,8 @@ export type PedidoCentralRow = {
   fecha_pago: string | null;
   envio_id: string | null;
   repartidor_assigned_id: string | null;
+  dhl_tracking_number: string | null;
+  estatus_empaque: 'pendiente' | 'en_proceso' | 'completado';
   created_at: string;
   updated_at: string;
 };

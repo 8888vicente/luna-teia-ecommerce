@@ -1,0 +1,271 @@
+.card {
+  background: #ffffff;
+  border: 1px solid var(--color-borde, #ebe5e0);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  border-color: #c9a87c;
+  box-shadow: 0 4px 12px rgba(201, 168, 124, 0.08);
+}
+
+.nextCard {
+  border-left: 5px solid #d97706 !important;
+  background-color: #fffbeb;
+}
+
+.completedCard {
+  opacity: 0.65;
+  background-color: #f9fafb;
+}
+
+.selectedCard {
+  border-color: #c9a87c;
+  box-shadow: 0 4px 12px rgba(201, 168, 124, 0.15);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  gap: 0.5rem;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.stopNum {
+  background: #3b82f6;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.nextCard .stopNum {
+  background: #d97706;
+}
+
+.cliente {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.badgePendiente {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+}
+
+.badgeEnRuta {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.badgeEntregado {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badgeCancelado {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.badgeAusente {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.body {
+  margin-bottom: 0.75rem;
+}
+
+.address {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.nextTag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #b45309;
+  margin-top: 0.25rem;
+  background-color: #fef3c7;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+.details {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--color-borde, #ebe5e0);
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.references {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0 0 0.5rem 0;
+  background: #f9fafb;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+}
+
+.notes {
+  font-size: 0.8rem;
+  color: #b45309;
+  margin: 0 0 0.75rem 0;
+  background: #fffbeb;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border-left: 3px solid #f59e0b;
+}
+
+.products {
+  font-size: 0.8rem;
+  color: #111827;
+}
+
+.prodList {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0.5rem 0;
+}
+
+.prodItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+}
+
+.price {
+  font-weight: 500;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.totalVal {
+  color: #10b981;
+}
+
+.paymentMethod {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0.25rem 0 0 0;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--color-borde, #ebe5e0);
+  padding-top: 0.75rem;
+}
+
+.links {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.navLink,
+.waLink,
+.telLink {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.navLink {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+}
+
+.navLink:hover {
+  background-color: #dbeafe;
+}
+
+.waLink {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+.waLink:hover {
+  background-color: #d1fae5;
+}
+
+.telLink {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.telLink:hover {
+  background-color: #e5e7eb;
+}
+
+.actions {
+  width: 100%;
+}

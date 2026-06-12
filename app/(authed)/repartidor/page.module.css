@@ -27,3 +27,12 @@
   color: #d50000;
   font-size: 1.1em;
 }
+
+.fullscreen {
+  width: calc(100% + 3rem);
+  height: calc(100% + 3rem);
+  margin: -1.5rem;
+  padding: 0;
+  overflow: hidden;
+}
+

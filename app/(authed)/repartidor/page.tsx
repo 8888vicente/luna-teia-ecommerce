@@ -1,13 +1,7 @@
-/**
- * Vista principal del Repartidor.
- * Server Component: lista los pedidos asignados al
- * repartidor autenticado y pasa los datos al
- * componente cliente para interacción.
- */
 import { redirect } from 'next/navigation';
 import { getSupabaseServer } from '@/lib/supabase/server';
-import { getPedidosAsignados } from '@/lib/crm/crm';
-import { ListaEntregas } from './components/ListaEntregas';
+import { getPedidosParaRuta } from '@/lib/reparto/queries';
+import { RepartidorDashboard } from './components/RepartidorDashboard';
 import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -23,12 +17,10 @@ export default async function RepartidorPage() {
     redirect('/login?next=/repartidor');
   }
 
-
   // claims vienen en app_metadata, pero el Custom Access Token Hook
   // los anida dentro de app_metadata.app_metadata.
   // Buscamos en ambos niveles.
   const appMeta = (user.app_metadata ?? {}) as Record<string, unknown>;
-
 
   const appMetaInner = (appMeta.app_metadata as Record<string, unknown> | undefined) ?? {};
 
@@ -51,9 +43,7 @@ export default async function RepartidorPage() {
     );
   }
 
-  const res = await getPedidosAsignados(supabase, repartidorId, {
-    soloActivos: true,
-  });
+  const res = await getPedidosParaRuta(supabase, repartidorId);
 
   if (!res.ok) {
     return (
@@ -65,15 +55,9 @@ export default async function RepartidorPage() {
   }
 
   return (
-    <main className={styles.container}>
-      <header className={styles.header}>
-        <h1>Entregas del día</h1>
-        <p className={styles.subtitle}>
-          Tienes <strong>{res.data.length}</strong> pedidos en ruta.
-        </p>
-      </header>
-
-      <ListaEntregas initialPedidos={res.data} repartidorId={repartidorId} />
-    </main>
+    <div className={styles.fullscreen}>
+      <RepartidorDashboard initialPedidos={res.data} repartidorId={repartidorId} />
+    </div>
   );
 }
+

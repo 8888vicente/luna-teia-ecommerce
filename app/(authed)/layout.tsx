@@ -45,8 +45,10 @@ const NAV: readonly NavItem[] = [
   { href: "/vendedor/ventas", label: "Ver ventas",    icon: "\u{1F4CA}", roles: ["Vendedor"] },
   { href: "/inventario",  label: "Ver inventario", icon: "\u{1F4E6}", roles: ["Administrador", "Vendedor"] },
   { href: "/repartidor", label: "Mi ruta",        icon: "\u{1F5FA}", roles: ["Repartidor"] },
+  { href: "/repartidor/inventario", label: "Mi inventario", icon: "\u{1F4E6}", roles: ["Repartidor"] },
   { href: "/repartidor", label: "Mi cartera",     icon: "\u{1F4B5}", roles: ["Repartidor"] },
 ];
+
 
 // =============================================
 // Initials helper para el avatar

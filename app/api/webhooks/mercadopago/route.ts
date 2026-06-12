@@ -70,11 +70,11 @@ export async function POST(request: Request) {
         if (fetchError || !order) {
           console.error(`❌ Error al obtener la orden ${externalReference} para sincronizar:`, fetchError?.message);
         } else {
-          // Verificar si ya existe en pedidos_central
+          // Verificar si ya existe en pedidos_central (por mp_payment_id en notas o por nombre+metodo)
           const { data: existing } = await supabase
             .from('pedidos_central')
             .select('id')
-            .eq('envio_id', order.id)
+            .ilike('notas_repartidor', `%MP Payment: ${paymentId}%`)
             .maybeSingle();
 
           if (existing) {
@@ -95,14 +95,13 @@ export async function POST(request: Request) {
                 referencias: order.address_references || null,
                 link_maps: null,
                 metodo_pago: 'tarjeta_mercado_pago',
-                notas_repartidor: null,
+                notas_repartidor: `Pedido e-commerce - MP Payment: ${paymentId}`,
                 estatus_pedido: 'pendiente',
                 tipo_entrega: 'paqueteria_nacional',
                 estatus_reparto: 'pendiente',
                 estatus_empaque: 'pendiente',
                 monto_pagado: order.total,
-                fecha_pago: paidAtStr,
-                envio_id: order.id
+                fecha_pago: paidAtStr
               })
               .select('id')
               .single();

@@ -20,6 +20,7 @@ function getResendClient(): Resend | null {
 const BRAND_COLOR = '#b45309'; // Luna Teia Elegant Amber/Brown Accent
 const TEXT_COLOR = '#1e293b';
 const BG_COLOR = '#fdfbf7'; // Cream background
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'ventas@lunateia.com';
 
 type PedidoConDetalles = PedidoCentralRow & {
   pedido_items?: Array<PedidoItemRow & {
@@ -148,7 +149,7 @@ export async function enviarConfirmacionPedidoEmail(
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Luna Teia <ventas@lunateia.com>',
+      from: `Luna Teia <${FROM_EMAIL}>`,
       to: emailDestino,
       subject: `Luna Teia — Confirmación de Pedido ${folio}`,
       html: html,
@@ -254,7 +255,7 @@ export async function enviarPedidoEmpacadoEmail(
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Luna Teia <ventas@lunateia.com>',
+      from: `Luna Teia <${FROM_EMAIL}>`,
       to: emailDestino,
       subject: `Luna Teia — Pedido Enviado ${folio} (Guía: ${tracking})`,
       html: html,

@@ -1,6 +1,7 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../../lib/supabase';
+import { getSupabaseService } from '../../../../lib/supabase/service';
+import { enviarConfirmacionPedidoEmail } from '../../../../lib/notifications/emailService';
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN!,
@@ -8,6 +9,7 @@ const client = new MercadoPagoConfig({
 
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabaseService();
     const body = await request.json();
 
     // Mercado Pago envía el webhook con { type, data: { id } }
@@ -140,18 +142,15 @@ export async function POST(request: Request) {
                 precio: item.price
               }));
 
-              // Llamada no bloqueante para no retrasar la respuesta a Mercado Pago
-              import('../../../../lib/notifications/emailService').then(({ enviarConfirmacionPedidoEmail }) => {
-                enviarConfirmacionPedidoEmail({
-                  id: crmPedidoId,
-                  cliente_nombre: order.customer_name,
-                  cliente_email: order.customer_email,
-                  direccion: direccionCompleta,
-                  ciudad: order.address_city,
-                  metodo_pago: 'tarjeta_mercado_pago',
-                } as any, emailItems).catch(err => {
-                  console.error('❌ Error en el envío de correo de confirmación de fondo:', err);
-                });
+              enviarConfirmacionPedidoEmail({
+                id: crmPedidoId,
+                cliente_nombre: order.customer_name,
+                cliente_email: order.customer_email,
+                direccion: direccionCompleta,
+                ciudad: order.address_city,
+                metodo_pago: 'tarjeta_mercado_pago',
+              } as any, emailItems).catch(err => {
+                console.error('❌ Error en el envío de correo de confirmación de fondo:', err);
               });
             }
           }

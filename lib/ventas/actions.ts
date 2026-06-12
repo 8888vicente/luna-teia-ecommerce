@@ -27,6 +27,7 @@ import { getSesion } from "@/lib/auth";
 export type ClienteInput = {
   nombre: string;
   telefono: string;
+  email?: string;
   direccion: string;
   ciudad: string;
   referencias?: string;
@@ -149,6 +150,7 @@ export async function crearPedidoAction(
     .insert({
       cliente_nombre: nombre,
       cliente_telefono: telefono,
+      cliente_email: input.cliente.email?.trim() || null,
       direccion,
       ciudad,
       referencias: input.cliente.referencias?.trim() ?? null,
@@ -240,6 +242,48 @@ export async function crearPedidoAction(
 
   // ── Folio ─────────────────────────
   const folio = `LTC-${pedidoId.slice(0, 8).toUpperCase()}`;
+
+  // ── Enviar correo de confirmación si el email está presente ──
+  if (input.cliente.email?.trim()) {
+    try {
+      const emailItems = input.productos.map((p) => ({
+        name: p.producto_id,
+        cantidad: p.cantidad,
+        precio: p.precio_unitario,
+      }));
+
+      const productIds = input.productos.map((p) => p.producto_id);
+      
+      supabase
+        .from('products')
+        .select('id, name')
+        .in('id', productIds)
+        .then(({ data: productsData }) => {
+          const itemsWithNames = emailItems.map((item) => {
+            const prod = productsData?.find((p) => p.id === item.name);
+            return {
+              ...item,
+              name: prod?.name || item.name,
+            };
+          });
+
+          import('../notifications/emailService').then(({ enviarConfirmacionPedidoEmail }) => {
+            enviarConfirmacionPedidoEmail({
+              id: pedidoId,
+              cliente_nombre: nombre,
+              cliente_email: input.cliente.email,
+              direccion: direccion,
+              ciudad: ciudad,
+              metodo_pago: input.metodo_pago,
+            } as any, itemsWithNames).catch((err) => {
+              console.error('❌ Error enviando email de confirmación desde vendedor actions:', err);
+            });
+          });
+        });
+    } catch (e) {
+      console.error('❌ Error enviando correo de confirmación de fondo:', e);
+    }
+  }
 
   revalidatePath("/vendedor");
 

@@ -73,6 +73,7 @@ export type PedidoCentralRow = {
   repartidor_assigned_id: string | null;
   dhl_tracking_number: string | null;
   estatus_empaque: 'pendiente' | 'en_proceso' | 'completado';
+  cliente_email: string | null;
   created_at: string;
   updated_at: string;
 };

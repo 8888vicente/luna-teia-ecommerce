@@ -71,6 +71,7 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
   const [cliente, setCliente] = useState({
     nombre: "",
     telefono: "",
+    email: "",
     direccion: "",
     ciudad: "",
     referencias: "",
@@ -139,6 +140,7 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
       cliente: {
         nombre: cliente.nombre,
         telefono: cliente.telefono,
+        email: cliente.email || undefined,
         direccion: cliente.direccion,
         ciudad: cliente.ciudad,
         referencias: cliente.referencias || undefined,
@@ -166,6 +168,7 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
       setCliente({
         nombre: "",
         telefono: "",
+        email: "",
         direccion: "",
         ciudad: "",
         referencias: "",
@@ -225,19 +228,20 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
           </div>
           <div className={styles.field}>
             <label htmlFor="cliente_telefono">Tel&eacute;fono *</label>
-
-
-
-
             <input id="cliente_telefono" required type="tel"
               value={cliente.telefono}
-
-
-
-
-
               onChange={(e) => setCliente((c) => ({ ...c, telefono: e.target.value }))}
               placeholder="+52 662 123 4567" />
+          </div>
+        </div>
+
+        <div className={styles.fieldRow}>
+          <div className={styles.field}>
+            <label htmlFor="cliente_email">Correo Electr&oacute;nico (Opcional)</label>
+            <input id="cliente_email" type="email"
+              value={cliente.email}
+              onChange={(e) => setCliente((c) => ({ ...c, email: e.target.value }))}
+              placeholder="cliente@correo.com" />
           </div>
         </div>
 

@@ -5,6 +5,7 @@ import type { PedidoParaRuta } from '@/lib/reparto/types';
 import type { PedidoEstatus } from '@/lib/crm/types';
 import { buildSingleNavLink } from '@/lib/maps/routing';
 import { BotonEstatus } from './BotonEstatus';
+import { obtenerEnlaceWhatsApp } from '@/lib/notifications/whatsappService';
 import styles from './TarjetaEntrega.module.css';
 
 type Props = {
@@ -27,10 +28,10 @@ export function TarjetaEntrega({
 }: Props) {
   const [expanded, setExpanded] = useState(false);
 
-  const cleanPhone = pedido.cliente_telefono.replace(/\D/g, '');
-  // Asegurar prefijo de país para México (52) si tiene 10 dígitos
-  const waPhone = cleanPhone.length === 10 ? `52${cleanPhone}` : cleanPhone;
-  const whatsappUrl = `https://wa.me/${waPhone}`;
+  const whatsappUrl = obtenerEnlaceWhatsApp(pedido.cliente_telefono, 'reparto', {
+    cliente_nombre: pedido.cliente_nombre,
+    direccion: pedido.direccion,
+  });
 
   const navUrl = pedido.coords
     ? buildSingleNavLink(pedido.coords.lat, pedido.coords.lng)

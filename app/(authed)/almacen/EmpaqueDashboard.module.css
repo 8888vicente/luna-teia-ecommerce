@@ -286,13 +286,36 @@
 
 .trackingInfo {
   margin: 0.25rem 0 1rem 0;
-  padding: 0.5rem;
+  padding: 0.5rem 0.75rem;
   background-color: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 0.8rem;
   color: #1e293b;
   font-family: monospace;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.whatsappLink {
+  background-color: #25d366;
+  color: #ffffff !important;
+  font-family: sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.whatsappLink:hover {
+  background-color: #128c7e;
 }
 
 /* Packing List Preview */

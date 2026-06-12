@@ -53,6 +53,27 @@ export async function actualizarEstatusEmpaqueAction(
     return { ok: false, error: error.message };
   }
 
+  // Si se marcó como completado, disparar correo de guía/rastreo
+  if (nuevoEstatus === 'completado') {
+    try {
+      const { data: pedido } = await supabase
+        .from('pedidos_central')
+        .select('*')
+        .eq('id', pedidoId)
+        .single();
+
+      if (pedido && pedido.cliente_email) {
+        import('../notifications/emailService').then(({ enviarPedidoEmpacadoEmail }) => {
+          enviarPedidoEmpacadoEmail(pedido).catch(err => {
+            console.error('❌ Error enviando correo de envío en almacenActions:', err);
+          });
+        });
+      }
+    } catch (e) {
+      console.error('❌ Excepción al buscar pedido para notificar guía:', e);
+    }
+  }
+
   revalidatePath('/almacen');
   revalidatePath('/admin/pedidos');
   revalidatePath('/admin/crm');

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import type { PedidoCentralRow, PedidoItemRow } from '@/lib/crm/types';
 import { actualizarEstatusEmpaqueAction } from '@/lib/admin/almacenActions';
 import { EtiquetaImpresion } from './EtiquetaImpresion';
+import { obtenerEnlaceWhatsApp } from '@/lib/notifications/whatsappService';
 import styles from './EmpaqueDashboard.module.css';
 
 type PedidoItemConProducto = PedidoItemRow & {
@@ -210,7 +211,19 @@ export function EmpaqueDashboard({ initialPedidos }: Props) {
 
                   {p.dhl_tracking_number && (
                     <div className={styles.trackingInfo}>
-                      <strong>Guía:</strong> {p.dhl_tracking_number}
+                      <span><strong>Guía:</strong> {p.dhl_tracking_number}</span>
+                      <a
+                        href={obtenerEnlaceWhatsApp(p.cliente_telefono, 'guia', {
+                          cliente_nombre: p.cliente_nombre,
+                          folio: `LTC-${p.id.slice(0, 8).toUpperCase()}`,
+                          tracking_number: p.dhl_tracking_number,
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.whatsappLink}
+                      >
+                        💬 WhatsApp
+                      </a>
                     </div>
                   )}
 

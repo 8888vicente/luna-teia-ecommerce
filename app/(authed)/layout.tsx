@@ -100,7 +100,7 @@ export default async function AuthedLayout({
 
   return (
     <div className={styles.shell}>
-      {/* ── Sidebar ─────────────────────── */}
+      {/* ── Sidebar — solo desktop ────── */}
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
           <div className={styles.brandMark} aria-hidden="true">LT</div>
@@ -126,7 +126,6 @@ export default async function AuthedLayout({
             );
           })}
         </nav>
-
 
         <div className={styles.userBox}>
           <div className={styles.avatar} aria-hidden="true">
@@ -164,6 +163,26 @@ export default async function AuthedLayout({
 
         <div className={styles.content}>{children}</div>
       </div>
+
+      {/* ── Bottom Nav — solo móvil ───────── */}
+      <nav className={styles.bottomNav} aria-label="Navegación principal">
+        {itemsVisibles.map((item, idx) => {
+          const showBadge = item.label === "Pedidos" && cancelacionesHoy > 0;
+          // Abreviar etiquetas para que quepan en la barra
+          const shortLabel = item.label.length > 10
+            ? item.label.slice(0, 9) + "…"
+            : item.label;
+          return (
+            <Link key={idx} href={item.href}>
+              <span className={styles.bottomNavIcon} aria-hidden="true">{item.icon}</span>
+              <span className={styles.bottomNavLabel}>
+                {shortLabel}
+                {showBadge ? ` (${cancelacionesHoy})` : ""}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
-}
+}

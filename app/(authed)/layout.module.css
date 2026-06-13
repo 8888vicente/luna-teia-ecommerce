@@ -1,37 +1,40 @@
-/* app/(authed)/layout.module.css */
+/* app/(authed)/layout.module.css — Mobile-first refactor */
 
+/* ── Shell ──────────────────────────────────── */
 .shell {
-  display: grid;
-  grid-template-columns: 260px 1fr;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: var(--color-fondo, #fffaf5);
 }
 
-@media (max-width: 768px) {
+/* Desktop: sidebar lateral */
+@media (min-width: 768px) {
   .shell {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    flex-direction: unset;
   }
 }
 
-/* ── Sidebar ────────────────────────────────── */
+/* ── Sidebar — desktop only ─────────────────── */
 .sidebar {
-  background: #ffffff;
-  border-right: 1px solid var(--color-borde, #ebe5e0);
-  padding: 1.25rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  /* Mobile: oculto — se reemplaza por bottomNav */
+  display: none;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .sidebar {
-    position: static;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--color-borde, #ebe5e0);
+    display: flex;
+    background: #ffffff;
+    border-right: 1px solid var(--color-borde, #ebe5e0);
+    padding: 1.25rem 1rem;
+    flex-direction: column;
+    gap: 1.25rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
   }
 }
 
@@ -78,7 +81,7 @@
   color: var(--color-texto-mute, #8a7970);
 }
 
-/* ── Nav ────────────────────────────────────── */
+/* ── Nav sidebar ────────────────────────────── */
 .nav {
   display: flex;
   flex-direction: column;
@@ -96,6 +99,7 @@
   color: var(--color-texto, #2a2a2a);
   font-size: 0.92rem;
   transition: background 120ms, color 120ms;
+  text-decoration: none;
 }
 
 .navItem:hover {
@@ -110,7 +114,7 @@
   flex-shrink: 0;
 }
 
-/* ── User box (al fondo del sidebar) ────────── */
+/* ── User box ───────────────────────────────── */
 .userBox {
   display: flex;
   align-items: center;
@@ -158,23 +162,94 @@
   letter-spacing: 0.04em;
 }
 
+/* ── Bottom Navigation — mobile only ───────── */
+.bottomNav {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid var(--color-borde, #ebe5e0);
+  z-index: 50;
+  padding: 0 0.25rem;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
+}
+
+.bottomNav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 0.6rem 0.25rem;
+  gap: 0.2rem;
+  color: var(--color-texto-mute, #8a7970);
+  text-decoration: none;
+  font-size: 0.65rem;
+  font-weight: 500;
+  transition: color 120ms;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.bottomNav a:hover,
+.bottomNav a:active {
+  color: #d50000;
+}
+
+.bottomNavIcon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.bottomNavLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  font-size: 0.62rem;
+}
+
+@media (min-width: 768px) {
+  .bottomNav {
+    display: none;
+  }
+}
+
 /* ── Main ───────────────────────────────────── */
 .main {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  /* Espacio para la barra inferior fija en móvil */
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
 }
 
+@media (min-width: 768px) {
+  .main {
+    padding-bottom: 0;
+  }
+}
+
+/* ── Topbar ─────────────────────────────────── */
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.9rem 1.5rem;
+  padding: 0.7rem 1rem;
   background: #ffffff;
   border-bottom: 1px solid var(--color-borde, #ebe5e0);
   position: sticky;
   top: 0;
   z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .topbar {
+    padding: 0.9rem 1.5rem;
+  }
 }
 
 .topbarLeft {
@@ -200,14 +275,15 @@
 }
 
 .logout {
-  padding: 0.45rem 0.9rem;
-  font-size: 0.85rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: var(--color-texto-suave, #6b5b50);
   border: 1px solid var(--color-borde, #ebe5e0);
   border-radius: 8px;
   background: #fff;
   transition: background 120ms, color 120ms, border-color 120ms;
+  cursor: pointer;
 }
 
 .logout:hover {
@@ -219,10 +295,18 @@
 /* ── Content ────────────────────────────────── */
 .content {
   flex: 1;
-  padding: 1.5rem;
-  overflow-x: auto;
+  padding: 1rem;
+  overflow-x: hidden;
 }
 
+@media (min-width: 768px) {
+  .content {
+    padding: 1.5rem;
+    overflow-x: auto;
+  }
+}
+
+/* ── Badge ───────────────────────────────────── */
 .badgeAlerta {
   background-color: #ef4444;
   color: white;

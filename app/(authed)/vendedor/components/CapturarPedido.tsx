@@ -351,29 +351,45 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
           const grupos = agruparCatalogo(catalogo, p.filtro);
           return (
             <div key={p.key} className={styles.productRow}>
-              <span className={styles.productIndex}>{idx + 1}.</span>
+              {/* Cabecera: número + chip + quitar */}
+              <div className={styles.productHeader}>
+                <span className={styles.productIndex}>#{idx + 1}</span>
+                {prodInfo && (
+                  <span
+                    className={styles.colorChip}
+                    style={{ background: prodInfo.color_hex }}
+                    title={prodInfo.name}
+                  />
+                )}
+                {prodInfo && (
+                  <span style={{ fontSize: "0.8rem", color: "#555", fontWeight: 600, flex: 1 }}>
+                    {prodInfo.name}
+                  </span>
+                )}
+                {productos.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => quitarProducto(p.key)}
+                    className={styles.removeBtn}
+                    aria-label="Quitar producto"
+                  >
+                    &times;
+                  </button>
+                )}
+              </div>
 
+              {/* Búsqueda + select agrupado */}
               <div className={styles.productSelectWrap}>
-                {/* Buscador de producto */}
                 <div className={styles.productSearchRow}>
                   <input
                     type="text"
                     value={p.filtro}
                     onChange={(e) => actualizarFiltro(p.key, e.target.value)}
-                    placeholder="Buscar producto..."
+                    placeholder="Buscar por nombre o familia..."
                     className={styles.productSearch}
                     aria-label="Filtrar productos"
                   />
-                  {prodInfo && (
-                    <span
-                      className={styles.colorChip}
-                      style={{ background: prodInfo.color_hex }}
-                      title={prodInfo.name}
-                    />
-                  )}
                 </div>
-
-                {/* Select agrupado por familia */}
                 <select
                   value={p.producto_id}
                   onChange={(e) => handleProductoSelect(p.key, e.target.value)}
@@ -389,7 +405,7 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
                     <optgroup key={family} label={`── ${family} ──`}>
                       {prods.map((prod) => (
                         <option key={prod.id} value={prod.id}>
-                          {prod.name} &mdash; ${prod.price.toFixed(2)}
+                          {prod.name} — ${prod.price.toFixed(2)}
                         </option>
                       ))}
                     </optgroup>
@@ -397,44 +413,42 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
                 </select>
               </div>
 
-              <input
-                type="number"
-                min={1}
-                value={p.cantidad}
-                onChange={(e) =>
-                  actualizarProducto(p.key, "cantidad", Number(e.target.value))
-                }
-                className={styles.qtyInput}
-                aria-label="Cantidad"
-              />
-              <input
-                type="number"
-                min={0}
-                step={0.01}
-                value={p.precio_unitario}
-                onChange={(e) =>
-                  actualizarProducto(
-                    p.key,
-                    "precio_unitario",
-                    Number(e.target.value)
-                  )
-                }
-                className={styles.priceInput}
-                aria-label="Precio unitario"
-              />
-              <span className={styles.subtotal}>
-                ${(p.cantidad * p.precio_unitario).toFixed(2)}
-              </span>
-              {productos.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => quitarProducto(p.key)}
-                  className={styles.removeBtn}
-                  aria-label="Quitar producto"
-                >
-                  &times;
-                </button>
-              )}
+              {/* Footer: cant / precio / subtotal */}
+              <div className={styles.productFooterLabels}>
+                <span>Cant.</span>
+                <span>Precio unit.</span>
+                <span>Subtotal</span>
+              </div>
+              <div className={styles.productFooter}>
+                <input
+                  type="number"
+                  min={1}
+                  value={p.cantidad}
+                  onChange={(e) =>
+                    actualizarProducto(p.key, "cantidad", Number(e.target.value))
+                  }
+                  className={styles.qtyInput}
+                  aria-label="Cantidad"
+                />
+                <input
+                  type="number"
+                  min={0}
+                  step={0.01}
+                  value={p.precio_unitario}
+                  onChange={(e) =>
+                    actualizarProducto(
+                      p.key,
+                      "precio_unitario",
+                      Number(e.target.value)
+                    )
+                  }
+                  className={styles.priceInput}
+                  aria-label="Precio unitario"
+                />
+                <span className={styles.subtotal}>
+                  ${(p.cantidad * p.precio_unitario).toFixed(2)}
+                </span>
+              </div>
             </div>
           );
         })}

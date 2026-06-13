@@ -3,7 +3,6 @@ export const revalidate = 0;
 import ProductStoriesBar from '../../components/ProductStoriesBar';
 import FacebookReviews from '../../components/FacebookReviews';
 import HeroSliderBackground from '../../components/HeroSliderBackground';
-import HeroButton from '../../components/HeroButton';
 import CategoriesGrid from '../../components/CategoriesGrid';
 import { getProductsByStore } from '../../lib/productService';
 
@@ -93,12 +92,17 @@ export default async function Home() {
 
         <div
           style={{
-            position: 'relative',
-            zIndex: 2,
+            position: 'absolute',
+            left: '50%',
+            bottom: 'clamp(1.5rem, 3vw, 3rem)',
+            transform: 'translateX(-50%)',
+            zIndex: 3,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '1rem',
+            gap: '0.5rem',
+            width: '100%',
+            padding: '0 1rem',
           }}
         >
           <h1
@@ -126,18 +130,6 @@ export default async function Home() {
             Descubre nuestra colección exclusiva de cosméticos diseñados para
             resaltar tu belleza única en cada ocasión.
           </p>
-        </div>
-
-        <div
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: 'clamp(1.5rem, 3vw, 3rem)',
-            transform: 'translateX(-50%) translateY(0)',
-            zIndex: 3,
-          }}
-        >
-          <HeroButton />
         </div>
       </section>
 

@@ -34,7 +34,7 @@ async function getCategoryImages() {
       }
     })
   );
-  return categories;
+  return categories.filter(cat => cat.images.length > 0);
 }
 
 async function getAllProducts() {

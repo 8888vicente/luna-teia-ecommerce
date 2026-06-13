@@ -46,7 +46,7 @@ type EstadoForm = "idle" | "saving" | "success" | "error";
 
 
 
-type FilaProducto = { key: string } & ProductoInput;
+type FilaProducto = { key: string; filtro: string } & ProductoInput;
 
 let nextKey = 0;
 function freshKey(): string {
@@ -54,6 +54,31 @@ function freshKey(): string {
 }
 
 type MetodoPago = "efectivo" | "transferencia" | "tarjeta_mercado_pago";
+
+/** Agrupa el catálogo por family y ordena alfabéticamente dentro de cada grupo */
+function agruparCatalogo(catalogo: Props["catalogo"], filtro: string) {
+  const texto = filtro.toLowerCase().trim();
+  const items = texto
+    ? catalogo.filter(
+        (p) =>
+          p.name.toLowerCase().includes(texto) ||
+          p.family.toLowerCase().includes(texto)
+      )
+    : catalogo;
+
+  const grupos: Record<string, typeof catalogo> = {};
+  for (const prod of items) {
+    if (!grupos[prod.family]) grupos[prod.family] = [];
+    grupos[prod.family].push(prod);
+  }
+  // Ordenar familias y productos dentro de cada una
+  return Object.entries(grupos)
+    .sort(([a], [b]) => a.localeCompare(b, "es"))
+    .map(([family, prods]) => ({
+      family,
+      prods: prods.sort((a, b) => a.name.localeCompare(b.name, "es")),
+    }));
+}
 
 
 export function CapturarPedido({ catalogo, repartidores }: Props) {
@@ -65,7 +90,7 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
   const [folio, setFolio] = useState<string | null>(null);
 
   const [productos, setProductos] = useState<FilaProducto[]>([
-    { key: freshKey(), producto_id: "", cantidad: 1, precio_unitario: 0 },
+    { key: freshKey(), filtro: "", producto_id: "", cantidad: 1, precio_unitario: 0 },
   ]);
 
   const [cliente, setCliente] = useState({
@@ -92,7 +117,7 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
   function agregarProducto() {
     setProductos((prev) => [
       ...prev,
-      { key: freshKey(), producto_id: "", cantidad: 1, precio_unitario: 0 },
+      { key: freshKey(), filtro: "", producto_id: "", cantidad: 1, precio_unitario: 0 },
     ]);
   }
 
@@ -119,9 +144,16 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
               ...p,
               producto_id: productoId,
               precio_unitario: prod?.price ?? 0,
+              filtro: "", // limpiar búsqueda al seleccionar
             }
           : p
       )
+    );
+  }
+
+  function actualizarFiltro(key: string, filtro: string) {
+    setProductos((prev) =>
+      prev.map((p) => (p.key === key ? { ...p, filtro } : p))
     );
   }
 
@@ -163,7 +195,7 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
 
     setTimeout(() => {
       setProductos([
-        { key: freshKey(), producto_id: "", cantidad: 1, precio_unitario: 0 },
+        { key: freshKey(), filtro: "", producto_id: "", cantidad: 1, precio_unitario: 0 },
       ]);
       setCliente({
         nombre: "",
@@ -314,77 +346,98 @@ export function CapturarPedido({ catalogo, repartidores }: Props) {
       <fieldset className={styles.fieldset}>
         <legend>Productos</legend>
 
-        {productos.map((p, idx) => (
-          <div key={p.key} className={styles.productRow}>
-            <span className={styles.productIndex}>{idx + 1}.</span>
+        {productos.map((p, idx) => {
+          const prodInfo = catalogo.find((c) => c.id === p.producto_id);
+          const grupos = agruparCatalogo(catalogo, p.filtro);
+          return (
+            <div key={p.key} className={styles.productRow}>
+              <span className={styles.productIndex}>{idx + 1}.</span>
 
+              <div className={styles.productSelectWrap}>
+                {/* Buscador de producto */}
+                <div className={styles.productSearchRow}>
+                  <input
+                    type="text"
+                    value={p.filtro}
+                    onChange={(e) => actualizarFiltro(p.key, e.target.value)}
+                    placeholder="Buscar producto..."
+                    className={styles.productSearch}
+                    aria-label="Filtrar productos"
+                  />
+                  {prodInfo && (
+                    <span
+                      className={styles.colorChip}
+                      style={{ background: prodInfo.color_hex }}
+                      title={prodInfo.name}
+                    />
+                  )}
+                </div>
 
+                {/* Select agrupado por familia */}
+                <select
+                  value={p.producto_id}
+                  onChange={(e) => handleProductoSelect(p.key, e.target.value)}
+                  className={styles.productSelect}
+                  required
+                >
+                  <option value="" disabled>
+                    {p.filtro && grupos.length === 0
+                      ? "Sin resultados"
+                      : "Seleccionar producto..."}
+                  </option>
+                  {grupos.map(({ family, prods }) => (
+                    <optgroup key={family} label={`── ${family} ──`}>
+                      {prods.map((prod) => (
+                        <option key={prod.id} value={prod.id}>
+                          {prod.name} &mdash; ${prod.price.toFixed(2)}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
 
-            <select value={p.producto_id}
-              onChange={(e) => handleProductoSelect(p.key, e.target.value)}
-
-
-
-
-
-
-              className={styles.productSelect} required>
-              <option value="" disabled>Seleccionar producto...</option>
-              {catalogo.map((prod) => (
-                <option key={prod.id} value={prod.id}>
-                  {prod.name} &mdash; ${prod.price.toFixed(2)}
-                </option>
-              ))}
-            </select>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <input type="number" min={1} value={p.cantidad}
-              onChange={(e) => actualizarProducto(p.key, "cantidad", Number(e.target.value))}
-              className={styles.qtyInput} aria-label="Cantidad" />
-            <input type="number" min={0} step={0.01} value={p.precio_unitario}
-              onChange={(e) => actualizarProducto(p.key, "precio_unitario", Number(e.target.value))}
-              className={styles.priceInput} aria-label="Precio unitario" />
-            <span className={styles.subtotal}>${(p.cantidad * p.precio_unitario).toFixed(2)}</span>
-            {productos.length > 1 && (
-
-
-
-
-
-
-
-
-              <button type="button" onClick={() => quitarProducto(p.key)}
-                className={styles.removeBtn} aria-label="Quitar producto">&times;</button>
-            )}
-          </div>
-        ))}
+              <input
+                type="number"
+                min={1}
+                value={p.cantidad}
+                onChange={(e) =>
+                  actualizarProducto(p.key, "cantidad", Number(e.target.value))
+                }
+                className={styles.qtyInput}
+                aria-label="Cantidad"
+              />
+              <input
+                type="number"
+                min={0}
+                step={0.01}
+                value={p.precio_unitario}
+                onChange={(e) =>
+                  actualizarProducto(
+                    p.key,
+                    "precio_unitario",
+                    Number(e.target.value)
+                  )
+                }
+                className={styles.priceInput}
+                aria-label="Precio unitario"
+              />
+              <span className={styles.subtotal}>
+                ${(p.cantidad * p.precio_unitario).toFixed(2)}
+              </span>
+              {productos.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => quitarProducto(p.key)}
+                  className={styles.removeBtn}
+                  aria-label="Quitar producto"
+                >
+                  &times;
+                </button>
+              )}
+            </div>
+          );
+        })}
 
         <button type="button" onClick={agregarProducto} className={styles.addBtn}>
           + Agregar producto

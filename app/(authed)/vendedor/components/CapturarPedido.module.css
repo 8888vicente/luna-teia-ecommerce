@@ -91,13 +91,66 @@
   font-size: 0.85rem;
 }
 
-.productSelect {
+.productSelectWrap {
   flex: 3;
-  padding: 0.45rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.productSearchRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.productSearch {
+  flex: 1;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  background: #f9f9f9;
+  transition: border-color 0.15s;
+}
+
+.productSearch:focus {
+  outline: none;
+  border-color: #d50000;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(213, 0, 0, 0.08);
+}
+
+.colorChip {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+  transition: transform 0.15s;
+}
+
+.colorChip:hover {
+  transform: scale(1.2);
+}
+
+.productSelect {
+  flex: 1;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 0.85rem;
   background: #fff;
+  cursor: pointer;
+}
+
+.productSelect:focus {
+  outline: none;
+  border-color: #d50000;
+  box-shadow: 0 0 0 2px rgba(213, 0, 0, 0.08);
 }
 
 .qtyInput {

@@ -4,16 +4,16 @@ import React from 'react';
 
 // Mensajes que se repiten en el ticker
 const TICKER_MESSAGES = [
+  '🚚 ENVÍO GRATIS en compras de $500+ | Envío a $80 de $200 a $499 | Envío nacional $150',
   '💳 3 MESES SIN INTERESES · DESDE $1,200 MXN',
   '✨ 6 MSI EN COMPRAS MAYORES A $2,400 MXN',
   '🌟 12 MSI EN COMPRAS MAYORES A $4,800 MXN',
   '💄 PAGA HOY, LUCE MAÑANA · LUNA TEIA',
-  '📦 ENVÍO GRATIS EN COMPRAS MAYORES A $500 MXN',
+  '🚚 ENVÍO GRATIS en compras de $500+ | Envío a $80 de $200 a $499 | Envío nacional $150',
   '💳 3 MESES SIN INTERESES · DESDE $1,200 MXN',
   '✨ 6 MSI EN COMPRAS MAYORES A $2,400 MXN',
   '🌟 12 MSI EN COMPRAS MAYORES A $4,800 MXN',
   '💄 PAGA HOY, LUCE MAÑANA · LUNA TEIA',
-  '📦 ENVÍO GRATIS EN COMPRAS MAYORES A $500 MXN',
 ];
 
 export default function MsiBanner() {

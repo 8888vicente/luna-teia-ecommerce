@@ -48,19 +48,7 @@ export default function PublicLayout({
 
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <CartProvider>
-          {/* Announcement Bar */}
-          <div
-            style={{
-              backgroundColor: '#212121',
-              color: 'white',
-              textAlign: 'center',
-              padding: '0.25rem',
-              fontSize: 'clamp(0.65rem, 1.5vw, 0.8rem)',
-              fontWeight: 'bold',
-            }}
-          >
-            🚚 ENVÍO GRATIS en compras de $500+ | Envío a $80 de $200 a $499 | Envío nacional $150
-          </div>
+          {/* Announcement Bar removed, merged into MsiBanner */}
           <MsiBanner />
           <Navbar />
           {children}

@@ -1,4 +1,5 @@
 import React from 'react';
+export const revalidate = 0;
 import ProductStoriesBar from '../../components/ProductStoriesBar';
 import FacebookReviews from '../../components/FacebookReviews';
 import HeroSliderBackground from '../../components/HeroSliderBackground';
@@ -102,28 +103,24 @@ export default async function Home() {
         >
           <h1
             style={{
-              position: 'absolute',
-              width: '1px',
-              height: '1px',
-              padding: 0,
-              margin: '-1px',
-              overflow: 'hidden',
-              clip: 'rect(0, 0, 0, 0)',
-              border: 0,
+              color: 'white',
+              fontSize: 'clamp(2rem, 6vw, 4rem)',
+              fontWeight: 900,
+              textShadow: '0 4px 12px rgba(0,0,0,0.5)',
+              margin: 0,
+              letterSpacing: '-1px',
             }}
           >
             Luna Teia Cosméticos
           </h1>
           <p
             style={{
-              position: 'absolute',
-              width: '1px',
-              height: '1px',
-              padding: 0,
-              margin: '-1px',
-              overflow: 'hidden',
-              clip: 'rect(0, 0, 0, 0)',
-              border: 0,
+              color: '#f5f5f5',
+              fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
+              maxWidth: '600px',
+              fontWeight: 500,
+              textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+              margin: '0 auto',
             }}
           >
             Descubre nuestra colección exclusiva de cosméticos diseñados para

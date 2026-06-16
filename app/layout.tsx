@@ -40,6 +40,12 @@ export const metadata: Metadata = {
   title: 'Luna Teia',
   description:
     'Sistema de gestión de ventas, repartos y comisiones de Luna Teia Cosméticos.',
+  verification: {
+    // Meta (Facebook) - verificación de dominio lunateia.com
+    other: {
+      'facebook-domain-verification': 'pqlz2kipq0efoqncah8briy2q4ez6z',
+    },
+  },
 };
 
 export const viewport: Viewport = {

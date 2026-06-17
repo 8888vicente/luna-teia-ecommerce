@@ -18,6 +18,7 @@
 
 import type { Metadata, Viewport } from 'next';
 import { Inter, Fraunces } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import { ToastProvider } from '@/lib/ui';
 import './globals.css';
 
@@ -63,7 +64,9 @@ export default function RootLayout({
     <html lang="es" className={`${inter.variable} ${fraunces.variable}`}>
       <body>
         <ToastProvider>{children}</ToastProvider>
+        <Analytics />
       </body>
     </html>
   );
 }
+

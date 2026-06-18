@@ -38,9 +38,33 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: 'Luna Teia',
+  title: 'Luna Teia Cosméticos',
   description:
-    'Sistema de gestión de ventas, repartos y comisiones de Luna Teia Cosméticos.',
+    'Tienda en línea de Luna Teia Cosméticos. Descubre y compra nuestros increíbles productos de belleza, maquillaje y cuidado personal.',
+  openGraph: {
+    title: 'Luna Teia Cosméticos',
+    description:
+      'Tienda en línea de Luna Teia Cosméticos. Descubre y compra nuestros increíbles productos de belleza, maquillaje y cuidado personal.',
+    url: 'https://lunateia.com',
+    siteName: 'Luna Teia',
+    images: [
+      {
+        url: 'https://lunateia.com/logo2.jpeg',
+        width: 1200,
+        height: 630,
+        alt: 'Luna Teia Cosméticos',
+      },
+    ],
+    locale: 'es_MX',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Luna Teia Cosméticos',
+    description:
+      'Tienda en línea de Luna Teia Cosméticos. Descubre y compra nuestros increíbles productos de belleza, maquillaje y cuidado personal.',
+    images: ['https://lunateia.com/logo2.jpeg'],
+  },
   verification: {
     // Meta (Facebook) - verificación de dominio lunateia.com
     other: {

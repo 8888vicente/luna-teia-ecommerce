@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../../../context/CartContext';
 import styles from './page.module.css';
+import { trackInitiateCheckout } from '../../../lib/metaPixel';
 
 export default function CheckoutPage() {
   const { items, subtotal, shippingCost } = useCart();
@@ -19,6 +20,14 @@ export default function CheckoutPage() {
   });
 
   const total = subtotal + shippingCost;
+  const trackedInitiateCheckout = useRef(false);
+
+  useEffect(() => {
+    if (items.length > 0 && !trackedInitiateCheckout.current) {
+      trackInitiateCheckout(items, total);
+      trackedInitiateCheckout.current = true;
+    }
+  }, [items, total]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));

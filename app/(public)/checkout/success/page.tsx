@@ -1,17 +1,60 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useCart } from '../../../../context/CartContext';
+import { supabase } from '../../../../lib/supabase';
+import { trackPurchase } from '../../../../lib/metaPixel';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'checking' | 'success' | 'error'>('checking');
   const paymentId = searchParams.get('payment_id');
+  const statusParam = searchParams.get('status');
+  
+  const { items, subtotal, shippingCost } = useCart();
+  const total = subtotal + shippingCost;
+  const trackedPurchase = useRef(false);
+
   useEffect(() => {
-    const timer = setTimeout(() => setStatus('success'), 2000);
+    const verifyPayment = async () => {
+      let isApproved = false;
+
+      if (statusParam === 'approved') {
+        isApproved = true;
+      }
+      
+      if (!isApproved && paymentId) {
+        try {
+          const { data } = await supabase
+            .from('ventas')
+            .select('estado_pago')
+            .eq('payment_id', paymentId)
+            .single();
+            
+          if (data && (data.estado_pago === 'pagado' || data.estado_pago === 'completado')) {
+            isApproved = true;
+          }
+        } catch (e) {
+          console.error('Error verificando pago en supabase:', e);
+        }
+      }
+
+      if (isApproved && !trackedPurchase.current && items.length > 0) {
+        trackPurchase(total, items);
+        trackedPurchase.current = true;
+      }
+
+      setStatus('success');
+    };
+
+    const timer = setTimeout(() => {
+      verifyPayment();
+    }, 1500);
+    
     return () => clearTimeout(timer);
-  }, []);
+  }, [paymentId, statusParam, items, total]);
 
   return (
     <>

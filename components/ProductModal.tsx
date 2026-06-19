@@ -9,6 +9,7 @@ import ProductGallery from './product-modal/ProductGallery';
 import ProductModalAnimations from './product-modal/ProductModalAnimations';
 import ProductModalHeader from './product-modal/ProductModalHeader';
 import { DEFAULT_DESC, DESCRIPTIONS } from './product-modal/productDescriptions';
+import { trackViewContent } from '../lib/metaPixel';
 
 interface ProductModalProps {
   product: Product;
@@ -28,6 +29,14 @@ export default function ProductModal({ product, products, onClose, onNavigate }:
   const modalRef = useRef<HTMLDivElement>(null);
   const historyPushed = useRef(false);
   const closingRef = useRef(false);
+  const lastTrackedProductId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (product && product.id !== lastTrackedProductId.current) {
+      trackViewContent(product);
+      lastTrackedProductId.current = product.id;
+    }
+  }, [product]);
 
   const cartQuantity = items.find(item => item.id === product.id)?.quantity ?? 0;
   const availableQuantity = product.stock !== undefined ? Math.max(0, product.stock - cartQuantity) : undefined;

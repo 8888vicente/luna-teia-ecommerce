@@ -1,6 +1,7 @@
 "use client";
 
 import { Product } from '../../context/CartContext';
+import { trackAddToCart } from '../../lib/metaPixel';
 
 interface AddToCartBarProps {
   product: Product;
@@ -19,7 +20,16 @@ export default function AddToCartBar({ product, isSoldOut, onAddItem, onClose }:
       backgroundColor: '#fff',
     }}>
       <button
-        onClick={() => { onAddItem(product); onClose(); }}
+        onClick={() => { 
+          try {
+            onAddItem(product); 
+            trackAddToCart(product);
+          } catch (e) {
+            console.error('Error adding to cart:', e);
+          } finally {
+            onClose(); 
+          }
+        }}
         disabled={isSoldOut}
         style={{
           width: '100%',

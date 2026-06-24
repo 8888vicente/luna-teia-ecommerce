@@ -1,6 +1,6 @@
 "use client";
 
-import { Product } from '../../context/CartContext';
+import { useCart, Product } from '../../context/CartContext';
 
 interface ProductDetailsProps {
   product: Product;
@@ -19,6 +19,8 @@ export default function ProductDetails({
   currentIndex,
   onNavigate,
 }: ProductDetailsProps) {
+  const { addItem } = useCart();
+  
   return (
     <div style={{ padding: '1.25rem 1.25rem 0.5rem' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
@@ -37,6 +39,9 @@ export default function ProductDetails({
             letterSpacing: '0.5px', textTransform: 'uppercase', margin: '0.2rem 0 0',
           }}>
             {product.category} · Mia Terra
+          </p>
+          <p style={{ fontSize: '0.8rem', color: '#4CAF50', fontWeight: '700', margin: '0.4rem 0 0' }}>
+            ✓ Más de 11,000 clientas desde 2018
           </p>
         </div>
       </div>
@@ -79,6 +84,77 @@ export default function ProductDetails({
           </span>
         ))}
       </div>
+
+      {/* Badges Dinámicos */}
+      {(() => {
+        const topSellers = ['Ciruela', 'Terra', 'Marte', 'Chocolate', 'Rojo', 'Anis', 'Blackberry'];
+        const trending = ['Rose', 'Expresso', 'Moka', 'Purpura', 'Naranja Mate'];
+        
+        if (topSellers.some(t => product.name.toLowerCase().includes(t.toLowerCase()))) {
+          return (
+            <div style={{ margin: '0 0 1rem' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: '800', backgroundColor: '#FFF3E0', color: '#E65100', padding: '0.3rem 0.8rem', borderRadius: '9999px', border: '1px solid #FFCC80' }}>
+                🏆 Nuestro tono más vendido
+              </span>
+            </div>
+          );
+        }
+        if (trending.some(t => product.name.toLowerCase().includes(t.toLowerCase()))) {
+          return (
+            <div style={{ margin: '0 0 1rem' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: '800', backgroundColor: '#FCE4EC', color: '#C2185B', padding: '0.3rem 0.8rem', borderRadius: '9999px', border: '1px solid #F48FB1' }}>
+                🔥 Tendencia actual
+              </span>
+            </div>
+          );
+        }
+        return null;
+      })()}
+
+      {/* Upsell Automático */}
+      {(() => {
+        const upsellMap: Record<string, string> = {
+          'chocolate': 'Terra',
+          'ciruela': 'Marte',
+          'anis': 'Chocolate',
+          'expresso': 'Blackberry',
+          'naranja mate': 'Rojo',
+          'rojo quemado': 'Blackberry',
+          'purpura': 'Blackberry',
+          'marte': 'Ciruela',
+          'blackberry': 'Ciruela',
+          'vino': 'Blackberry'
+        };
+
+        const targetToneName = Object.keys(upsellMap).find(k => product.name.toLowerCase().includes(k));
+        if (!targetToneName) return null;
+        
+        const upsellTone = upsellMap[targetToneName];
+        const upsellProduct = products.find(p => p.name.toLowerCase().includes(upsellTone.toLowerCase()));
+        
+        if (!upsellProduct) return null;
+
+        return (
+          <div style={{ backgroundColor: '#F3E5F5', padding: '1rem', borderRadius: '12px', marginBottom: '1.2rem', border: '1px solid #E1BEE7' }}>
+            <p style={{ fontSize: '0.85rem', color: '#6A1B9A', fontWeight: '700', margin: '0 0 0.5rem' }}>
+              💡 Frecuentemente comprados juntos:
+            </p>
+            <p style={{ fontSize: '0.8rem', color: '#4A148C', margin: '0 0 0.5rem' }}>
+              Clientas que compran <strong>{product.name}</strong> también agregan <strong>{upsellProduct.name}</strong> a su look.
+            </p>
+            <button 
+              onClick={(e) => {
+                e.preventDefault();
+                addItem(upsellProduct);
+              }}
+              style={{
+                backgroundColor: '#9C27B0', color: 'white', padding: '0.4rem 1rem', borderRadius: '8px', border: 'none', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', width: '100%'
+              }}>
+              Agregar {upsellProduct.name} (+${upsellProduct.price})
+            </button>
+          </div>
+        );
+      })()}
 
       {products.length > 1 && (
         <div style={{

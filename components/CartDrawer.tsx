@@ -67,13 +67,12 @@ export default function CartDrawer() {
 
         <div style={{ padding: '1.5rem', borderTop: '1px solid #ECEFF1', backgroundColor: '#FAFAFA' }}>
           
-          {/* Barra de Progreso de Envío */}
-          <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: shippingCost === 0 ? '#E8F5E9' : '#FFF3E0', borderRadius: '8px', border: `1px solid ${shippingCost === 0 ? '#C8E6C9' : '#FFE0B2'}` }}>
-            <p style={{ fontSize: '0.9rem', textAlign: 'center', color: shippingCost === 0 ? '#2E7D32' : '#E65100', fontWeight: 'bold' }}>
-              {subtotal === 0 && "Agrega $200 para envío subsidiado"}
-              {subtotal > 0 && subtotal < 200 && `¡Agrega $${200 - subtotal} más para envío subsidiado a $50!`}
-              {subtotal >= 200 && subtotal < 500 && `¡Agrega $${500 - subtotal} más para ENVÍO GRATIS!`}
-              {subtotal >= 500 && "¡Felicidades! Tienes ENVÍO NACIONAL GRATIS 🎉"}
+          {/* Barra de Progreso de Envío basada en subtotal */}
+          <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: subtotal >= 400 ? '#E8F5E9' : '#FFF3E0', borderRadius: '8px', border: `1px solid ${subtotal >= 400 ? '#C8E6C9' : '#FFE0B2'}` }}>
+            <p style={{ fontSize: '0.9rem', textAlign: 'center', color: subtotal >= 400 ? '#2E7D32' : '#E65100', fontWeight: 'bold' }}>
+              {subtotal < 300 && `📦 Agrega $${300 - subtotal} más para que tu envío baje a $40`}
+              {subtotal >= 300 && subtotal < 400 && `✅ ¡Envío subsidiado a $40! 🎁 Agrega $${400 - subtotal} más para envío GRATIS`}
+              {subtotal >= 400 && "🎉 ¡Felicidades! Tienes envío GRATIS activado"}
             </p>
           </div>
 

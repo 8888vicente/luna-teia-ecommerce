@@ -19,6 +19,11 @@ export default function AddToCartBar({ product, isSoldOut, onAddItem, onClose }:
       borderTop: '1px solid #f0f0f0',
       backgroundColor: '#fff',
     }}>
+      <div style={{ marginBottom: '0.75rem', textAlign: 'center' }}>
+        <p style={{ fontSize: '0.75rem', fontWeight: '700', color: '#E65100', backgroundColor: '#FFF3E0', padding: '0.4rem', borderRadius: '8px', margin: 0, border: '1px solid #FFE0B2' }}>
+          📦 Envíos a $40 a partir de $300 o GRATIS en pedidos de $400+
+        </p>
+      </div>
       <button
         onClick={() => { 
           try {

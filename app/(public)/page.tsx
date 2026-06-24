@@ -127,8 +127,7 @@ export default async function Home() {
               margin: '0 auto',
             }}
           >
-            Descubre nuestra colección exclusiva de cosméticos diseñados para
-            resaltar tu belleza única en cada ocasión.
+            Vendemos a través de Facebook desde 2018. Únete a las más de 11,000 clientas felices que confían en Cosméticos Luna.
           </p>
         </div>
       </section>

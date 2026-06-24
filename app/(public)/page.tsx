@@ -127,7 +127,7 @@ export default async function Home() {
               margin: '0 auto',
             }}
           >
-            Vendemos a través de Facebook desde 2018. Únete a las más de 11,000 clientas felices que confían en Cosméticos Luna.
+            ✨ Desde 2018 hemos atendido miles de pedidos en México
           </p>
         </div>
       </section>

@@ -128,11 +128,18 @@ export default function CartDrawer() {
               color: 'white', 
               fontWeight: 'bold', 
               borderRadius: '4px',
-              cursor: items.length === 0 ? 'not-allowed' : 'pointer'
+              cursor: items.length === 0 ? 'not-allowed' : 'pointer',
+              marginBottom: '0.75rem'
             }}
           >
             Proceder al Pago
           </button>
+          
+          <div style={{ textAlign: 'center', marginTop: '0.5rem' }}>
+            <p style={{ fontSize: '0.7rem', color: '#757575', margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+              🔒 Tu compra está protegida por Mercado Pago. Más de 5 años enviando belleza a todo México.
+            </p>
+          </div>
         </div>
       </div>
       <style dangerouslySetInnerHTML={{__html: `

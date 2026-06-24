@@ -40,9 +40,17 @@ export default function ProductDetails({
           }}>
             {product.category} · Mia Terra
           </p>
-          <p style={{ fontSize: '0.8rem', color: '#4CAF50', fontWeight: '700', margin: '0.4rem 0 0' }}>
-            ✓ Más de 11,000 clientas desde 2018
-          </p>
+          <div style={{ marginTop: '0.6rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+            <p style={{ fontSize: '0.75rem', color: '#4CAF50', fontWeight: '700', margin: 0 }}>
+              ✓ Miles de clientas atendidas desde 2018
+            </p>
+            <p style={{ fontSize: '0.75rem', color: '#6A1B9A', fontWeight: '700', margin: 0 }}>
+              ✓ Las clientas suelen elegir entre 3 y 5 tonos por pedido
+            </p>
+            <p style={{ fontSize: '0.75rem', color: '#E65100', fontWeight: '700', margin: 0 }}>
+              🚚 Envío desde $40 y GRATIS a partir de $400
+            </p>
+          </div>
         </div>
       </div>
 
@@ -94,7 +102,7 @@ export default function ProductDetails({
           return (
             <div style={{ margin: '0 0 1rem' }}>
               <span style={{ fontSize: '0.75rem', fontWeight: '800', backgroundColor: '#FFF3E0', color: '#E65100', padding: '0.3rem 0.8rem', borderRadius: '9999px', border: '1px solid #FFCC80' }}>
-                🏆 Nuestro tono más vendido
+                🏆 Favorito histórico
               </span>
             </div>
           );
@@ -137,10 +145,10 @@ export default function ProductDetails({
         return (
           <div style={{ backgroundColor: '#F3E5F5', padding: '1rem', borderRadius: '12px', marginBottom: '1.2rem', border: '1px solid #E1BEE7' }}>
             <p style={{ fontSize: '0.85rem', color: '#6A1B9A', fontWeight: '700', margin: '0 0 0.5rem' }}>
-              💡 Frecuentemente comprados juntos:
+              ✨ Combinación popular:
             </p>
             <p style={{ fontSize: '0.8rem', color: '#4A148C', margin: '0 0 0.5rem' }}>
-              Clientas que compran <strong>{product.name}</strong> también agregan <strong>{upsellProduct.name}</strong> a su look.
+              💄 Elegido frecuentemente por nuestras clientas junto con <strong>{product.name}</strong>.
             </p>
             <button 
               onClick={(e) => {

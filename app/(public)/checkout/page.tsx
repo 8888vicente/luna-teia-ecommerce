@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../../../context/CartContext';
 import styles from './page.module.css';
 import { trackInitiateCheckout } from '../../../lib/metaPixel';
-import TrustBadges from '../../../components/TrustBadges';
+import TrustBadges, { MercadoPagoLogo } from '../../../components/TrustBadges';
 
 export default function CheckoutPage() {
   const { items, subtotal, shippingCost } = useCart();
@@ -147,7 +147,7 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        <h2 className={styles.title} style={{ marginTop: '2rem' }}>🔒 Método de Pago Seguro</h2>
+        <h2 className={styles.title} style={{ marginTop: '2rem' }}>Método de Pago</h2>
         
         {/* Sección de confianza Mercado Pago */}
         <div style={{
@@ -156,42 +156,32 @@ export default function CheckoutPage() {
           backgroundColor: '#f0f4ff',
           border: '1px solid #d0dff0',
           marginBottom: '1.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
         }}>
-          <p style={{ color: '#37474F', fontSize: '0.95rem', marginBottom: '1rem', lineHeight: 1.5 }}>
-            Serás redirigido de forma segura a <strong>Mercado Pago</strong> para completar tu compra.
+          <p style={{ color: '#37474F', fontSize: '0.9rem', marginBottom: '0.75rem', fontWeight: '600' }}>
+            Compra segura mediante
           </p>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ color: '#2E7D32', fontSize: '0.85rem' }}>✓</span>
-              <span style={{ fontSize: '0.85rem', color: '#37474F', fontWeight: '600' }}>Tus datos están protegidos con encriptación</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ color: '#2E7D32', fontSize: '0.85rem' }}>✓</span>
-              <span style={{ fontSize: '0.85rem', color: '#37474F', fontWeight: '600' }}>Paga con tarjeta, OXXO o transferencia</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ color: '#2E7D32', fontSize: '0.85rem' }}>✓</span>
-              <span style={{ fontSize: '0.85rem', color: '#37474F', fontWeight: '600' }}>Respaldo total de la plataforma de pagos líder en Latinoamérica</span>
-            </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <MercadoPagoLogo width={90} />
           </div>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.4rem',
-            padding: '0.5rem',
-            backgroundColor: 'rgba(255,255,255,0.7)',
-            borderRadius: '8px',
-            border: '1px solid #e0e8f0',
-          }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="11" width="18" height="11" rx="2" fill="#2D3277" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="#2D3277" strokeWidth="2" strokeLinecap="round" fill="none" />
-              <circle cx="12" cy="16" r="1.5" fill="white" />
-            </svg>
-            <span style={{ fontSize: '0.72rem', color: '#607D8B', fontWeight: '600' }}>Transacción cifrada y procesada por Mercado Pago</span>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'flex-start', width: '100%', maxWidth: '240px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#37474F', fontWeight: '600' }}>
+              <span style={{ color: '#00b1ea', fontWeight: 'bold' }}>✓</span>
+              <span>Tarjetas de crédito y débito</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#37474F', fontWeight: '600' }}>
+              <span style={{ color: '#00b1ea', fontWeight: 'bold' }}>✓</span>
+              <span>Transferencias bancarias</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#37474F', fontWeight: '600' }}>
+              <span style={{ color: '#00b1ea', fontWeight: 'bold' }}>✓</span>
+              <span>Protección de Mercado Pago</span>
+            </div>
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useToast } from '../lib/ui/Toast';
 
 export type Product = {
   id: string;
@@ -39,6 +40,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [isCartHighlighted, setIsCartHighlighted] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const highlightTimeout = React.useRef<number | null>(null);
+  const toast = useToast();
 
   // Cargar carrito desde localStorage al montar
   useEffect(() => {
@@ -85,6 +87,35 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setIsCartHighlighted(false);
       highlightTimeout.current = null;
     }, 1200);
+
+    // ── Toast de Recomendación de Tonos ──
+    try {
+      const currentLipsticksCount = items.reduce((acc, item) => acc + item.quantity, 0);
+      const newCount = currentLipsticksCount + 1;
+      
+      const nudes = ['terra', 'moka', 'palo rosa', 'naranja mate', 'rose'];
+      const intensos = ['ciruela', 'blackberry', 'vino', 'expresso', 'purpura'];
+      const clasicos = ['rojo', 'chocolate', 'marte', 'pasion', 'cereza'];
+      
+      const name = product.name.toLowerCase();
+      let message = "💄 ¡Excelente elección! Agrega un tono contrastante para otra ocasión.";
+      
+      if (newCount >= 3) {
+        message = "🎉 ¡Agregado al carrito! Tienes opciones para cualquier momento de tu semana.";
+      } else if (nudes.some(n => name.includes(n))) {
+        message = "🎉 ¡Agregado al carrito! Tono ideal de diario. ¡Agrega un intenso (como Vino o Ciruela) para la noche!";
+      } else if (intensos.some(i => name.includes(i))) {
+        message = "🎉 ¡Agregado al carrito! Increíble para eventos. ¿Qué tal un Nude suave para la oficina (como Moka o Rose)?";
+      } else if (clasicos.some(c => name.includes(c))) {
+        message = "🎉 ¡Agregado al carrito! ¡Un clásico infalible! Arma tu colección con uno de nuestros tonos en tendencia.";
+      } else {
+        message = `🎉 ¡Agregado al carrito! ${product.name} listo para brillar.`;
+      }
+
+      toast.show({ message, duration: 7000, tone: 'success' });
+    } catch (e) {
+      console.error('Error mostrando toast de recomendación:', e);
+    }
   };
 
   const removeItem = (productId: string) => {

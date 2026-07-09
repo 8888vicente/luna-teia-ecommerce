@@ -33,31 +33,6 @@ export default function AddToCartBar({ product, isSoldOut, onAddItem, onClose }:
           try {
             onAddItem(product); 
             trackAddToCart(product);
-            
-            // Toast notification logic
-            if (product.category?.toLowerCase().includes('labial') || true) { // Defaulting to all for safety since these are their main products
-              const currentLipsticksCount = items.reduce((acc, item) => acc + item.quantity, 0);
-              const newCount = currentLipsticksCount + 1;
-              
-              const nudes = ['terra', 'moka', 'palo rosa', 'naranja mate', 'rose'];
-              const intensos = ['ciruela', 'blackberry', 'vino', 'expresso', 'purpura'];
-              const clasicos = ['rojo', 'chocolate', 'marte', 'pasion', 'cereza'];
-              
-              const name = product.name.toLowerCase();
-              let message = "💄 ¡Excelente elección! Agrega un tono contrastante para otra ocasión.";
-              
-              if (newCount >= 3) {
-                message = "🎉 ¡Colección en proceso! Tienes opciones para cualquier momento de tu semana.";
-              } else if (nudes.some(n => name.includes(n))) {
-                message = "💄 Tono ideal de diario. ¡Agrega un intenso (como Vino o Ciruela) para la noche!";
-              } else if (intensos.some(i => name.includes(i))) {
-                message = "✨ Increíble para eventos. ¿Qué tal un Nude suave para la oficina (como Moka o Rose)?";
-              } else if (clasicos.some(c => name.includes(c))) {
-                message = "🏆 ¡Un clásico infalible! Arma tu colección con uno de nuestros tonos en tendencia.";
-              }
-
-              toast.show({ message, duration: 2500, tone: 'success' });
-            }
           } catch (e) {
             console.error('Error adding to cart:', e);
           } finally {

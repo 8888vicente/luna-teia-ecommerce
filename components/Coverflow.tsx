@@ -226,7 +226,10 @@ export default function Coverflow({ products, families, onProductClick }: Coverf
         </div>
         
         <button
-          onClick={() => addItem(activeProduct)}
+          onClick={() => {
+            addItem(activeProduct);
+            if (onProductClick) onProductClick(activeProduct);
+          }}
           disabled={isActiveSoldOut}
           style={{
             backgroundColor: isActiveSoldOut ? '#9e9e9e' : '#E53935',

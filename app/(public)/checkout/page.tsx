@@ -168,10 +168,6 @@ export default function CheckoutPage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span style={{ color: '#2E7D32', fontSize: '0.85rem' }}>✓</span>
-              <span style={{ fontSize: '0.85rem', color: '#37474F', fontWeight: '600' }}>No almacenamos datos de tarjeta</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ color: '#2E7D32', fontSize: '0.85rem' }}>✓</span>
               <span style={{ fontSize: '0.85rem', color: '#37474F', fontWeight: '600' }}>Paga con tarjeta, OXXO o transferencia</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

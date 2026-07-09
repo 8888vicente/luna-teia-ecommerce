@@ -134,7 +134,7 @@ export default function StoreTemplate({ storeName, title, subtitle, gradient, na
                         <div style={{ display: 'flex', gap: '0.35rem', marginTop: 'auto', paddingTop: '0.25rem' }}>
                           <button onClick={() => setSelectedProduct(pr)} style={{ flex: 1, padding: '0.4rem 0.5rem', background: '#f5f5f5', color: '#424242', borderRadius: 8, fontWeight: 700, fontSize: 'clamp(0.7rem,1.5vw,0.8rem)', cursor: 'pointer', border: '1px solid #e0e0e0', transition: 'background 0.2s' }}>Ver</button>
                           {so ? <button disabled style={{ flex: 1, padding: '0.4rem 0.5rem', background: '#9e9e9e', color: 'white', borderRadius: 8, fontWeight: 700, fontSize: 'clamp(0.7rem,1.5vw,0.8rem)', border: 'none', opacity: 0.7 }}>Agotado</button>
-                          : <button onClick={() => addItem(pr)} style={{ flex: 1, padding: '0.4rem 0.5rem', background: '#212121', color: 'white', borderRadius: 8, fontWeight: 700, fontSize: 'clamp(0.7rem,1.5vw,0.8rem)', cursor: 'pointer', border: 'none', transition: 'background 0.2s' }}>+ Carro</button>}
+                          : <button onClick={() => { addItem(pr); setSelectedProduct(pr); }} style={{ flex: 1, padding: '0.4rem 0.5rem', background: '#212121', color: 'white', borderRadius: 8, fontWeight: 700, fontSize: 'clamp(0.7rem,1.5vw,0.8rem)', cursor: 'pointer', border: 'none', transition: 'background 0.2s' }}>+ Carro</button>}
                         </div>
                       </div>
                     );

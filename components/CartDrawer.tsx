@@ -3,6 +3,7 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 import { useRouter } from 'next/navigation';
+import TrustBadges from './TrustBadges';
 
 export default function CartDrawer() {
   const { isCartOpen, closeCart, items, removeItem, subtotal, shippingCost, totalItems } = useCart();
@@ -14,6 +15,47 @@ export default function CartDrawer() {
     closeCart();
     router.push('/checkout');
   };
+
+  // ── Shipping progress bar logic ──
+  const tiers = [
+    { min: 0,   cost: 150, label: '$150', next: 200 },
+    { min: 200, cost: 80,  label: '$80',  next: 300 },
+    { min: 300, cost: 40,  label: '$40',  next: 400 },
+    { min: 400, cost: 0,   label: 'GRATIS', next: null },
+  ];
+  const currentTierIndex = subtotal >= 400 ? 3 : subtotal >= 300 ? 2 : subtotal >= 200 ? 1 : 0;
+  const nextTier = tiers[currentTierIndex].next;
+  const amountToNext = nextTier ? nextTier - subtotal : 0;
+
+  // Progress percentage within the bar (0-100)
+  const progressPercent = subtotal >= 400 ? 100
+    : subtotal >= 300 ? 75 + (25 * (subtotal - 300) / 100)
+    : subtotal >= 200 ? 50 + (25 * (subtotal - 200) / 100)
+    : Math.min(50, (subtotal / 200) * 50);
+
+  // Shipping message
+  let shippingMessage = '';
+  let shippingBg = '#FFF3E0';
+  let shippingBorder = '#FFE0B2';
+  let shippingColor = '#E65100';
+
+  if (subtotal < 200) {
+    shippingMessage = subtotal > 0
+      ? `📦 Agrega $${200 - subtotal} más para que tu envío baje a $80`
+      : '📦 Agrega productos para empezar tu pedido';
+  } else if (subtotal < 300) {
+    shippingMessage = `🎯 ¡Tu envío bajó a $80! Agrega $${300 - subtotal} más para envío a solo $40`;
+  } else if (subtotal < 400) {
+    shippingMessage = `✅ ¡Envío a solo $40! Agrega $${400 - subtotal} más para envío GRATIS`;
+    shippingBg = '#E3F2FD';
+    shippingBorder = '#BBDEFB';
+    shippingColor = '#1565C0';
+  } else {
+    shippingMessage = '🎉 ¡Felicidades! Tienes envío GRATIS';
+    shippingBg = '#E8F5E9';
+    shippingBorder = '#C8E6C9';
+    shippingColor = '#2E7D32';
+  }
 
   return (
     <>
@@ -67,49 +109,63 @@ export default function CartDrawer() {
 
         <div style={{ padding: '1.5rem', borderTop: '1px solid #ECEFF1', backgroundColor: '#FAFAFA' }}>
           
-          {/* Barra de Progreso de Envío basada en subtotal */}
-          <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: subtotal >= 400 ? '#E8F5E9' : '#FFF3E0', borderRadius: '8px', border: `1px solid ${subtotal >= 400 ? '#C8E6C9' : '#FFE0B2'}` }}>
-            <p style={{ fontSize: '0.9rem', textAlign: 'center', color: subtotal >= 400 ? '#2E7D32' : '#E65100', fontWeight: 'bold' }}>
-              {subtotal < 300 && `📦 Agrega $${300 - subtotal} más para que tu envío baje a $40`}
-              {subtotal >= 300 && subtotal < 400 && `✅ ¡Envío subsidiado a $40! 🎁 Agrega $${400 - subtotal} más para envío GRATIS`}
-              {subtotal >= 400 && "🎉 ¡Felicidades! Tienes envío GRATIS activado"}
+          {/* ── Barra de Progreso de Envío — 4 niveles ── */}
+          <div style={{
+            marginBottom: '1.25rem',
+            padding: '1rem',
+            backgroundColor: shippingBg,
+            borderRadius: '10px',
+            border: `1px solid ${shippingBorder}`,
+          }}>
+            {/* Mensaje principal */}
+            <p style={{
+              fontSize: '0.85rem',
+              textAlign: 'center',
+              color: shippingColor,
+              fontWeight: 'bold',
+              marginBottom: '0.75rem',
+            }}>
+              {shippingMessage}
             </p>
-          </div>
 
-          {/* Bloque MSI */}
-          {subtotal >= 1200 && (
+            {/* Barra visual de progreso */}
             <div style={{
-              marginBottom: '1rem',
-              padding: '0.75rem 1rem',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, #1a1a2e, #0f3460)',
-              border: '1px solid #ffd70055',
-              textAlign: 'center'
+              position: 'relative',
+              height: '6px',
+              backgroundColor: '#e0e0e0',
+              borderRadius: '9999px',
+              overflow: 'hidden',
+              marginBottom: '0.5rem',
             }}>
-              <p style={{ fontSize: '0.75rem', fontWeight: '800', color: '#ffd700', letterSpacing: '1px', margin: 0 }}>
-                💳 ¡ELEGIBLE PARA MESES SIN INTERESES!
-              </p>
-              <p style={{ fontSize: '0.7rem', color: '#ffffff99', marginTop: '0.25rem', margin: '0.25rem 0 0 0' }}>
-                {subtotal >= 4800 ? '3, 6 o 12 MSI disponibles' :
-                 subtotal >= 2400 ? '3 o 6 MSI disponibles' :
-                 '3 MSI disponibles'} al proceder al pago
-              </p>
+              <div style={{
+                height: '100%',
+                width: `${progressPercent}%`,
+                background: subtotal >= 400
+                  ? 'linear-gradient(90deg, #66BB6A, #43A047)'
+                  : 'linear-gradient(90deg, #FFB74D, #FF9800)',
+                borderRadius: '9999px',
+                transition: 'width 0.5s ease',
+              }} />
             </div>
-          )}
-          {subtotal > 0 && subtotal < 1200 && (
+
+            {/* Labels de los 4 niveles */}
             <div style={{
-              marginBottom: '1rem',
-              padding: '0.6rem 1rem',
-              borderRadius: '8px',
-              background: '#f5f5f5',
-              border: '1px dashed #e0e0e0',
-              textAlign: 'center'
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '0.6rem',
+              fontWeight: '700',
+              color: '#9e9e9e',
             }}>
-              <p style={{ fontSize: '0.7rem', color: '#9e9e9e', margin: 0 }}>
-                ¡Agrega <strong style={{ color: '#212121' }}>${1200 - subtotal} MXN más</strong> para acceder a meses sin intereses
-              </p>
+              {tiers.map((tier, i) => (
+                <span key={i} style={{
+                  color: i <= currentTierIndex ? shippingColor : '#bdbdbd',
+                  transition: 'color 0.3s',
+                }}>
+                  {tier.label}
+                </span>
+              ))}
             </div>
-          )}
+          </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>
             <span>Subtotal:</span>
@@ -129,17 +185,14 @@ export default function CartDrawer() {
               fontWeight: 'bold', 
               borderRadius: '4px',
               cursor: items.length === 0 ? 'not-allowed' : 'pointer',
-              marginBottom: '0.75rem'
+              marginBottom: '0.5rem'
             }}
           >
             Proceder al Pago
           </button>
           
-          <div style={{ textAlign: 'center', marginTop: '0.5rem' }}>
-            <p style={{ fontSize: '0.7rem', color: '#757575', margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-              🔒 Tu compra está protegida por Mercado Pago. Más de 5 años enviando belleza a todo México.
-            </p>
-          </div>
+          {/* ── Trust Badge con Mercado Pago ── */}
+          <TrustBadges variant="compact" />
         </div>
       </div>
       <style dangerouslySetInnerHTML={{__html: `

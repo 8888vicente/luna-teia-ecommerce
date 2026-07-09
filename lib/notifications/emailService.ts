@@ -44,7 +44,18 @@ export async function enviarConfirmacionPedidoEmail(
   if (!resend) return false;
 
   const folio = `LTC-${pedido.id.slice(0, 8).toUpperCase()}`;
-  const total = items.reduce((sum, item) => sum + (item.cantidad * item.precio), 0);
+  const subtotal = items.reduce((sum, item) => sum + (item.cantidad * item.precio), 0);
+  let shippingCost = 150;
+  if (subtotal >= 400) {
+    shippingCost = 0;
+  } else if (subtotal >= 300) {
+    shippingCost = 40;
+  } else if (subtotal >= 200) {
+    shippingCost = 80;
+  } else if (subtotal < 15) {
+    shippingCost = 0;
+  }
+  const total = subtotal + shippingCost;
 
   const itemsHtml = items
     .map(
@@ -119,12 +130,12 @@ export async function enviarConfirmacionPedidoEmail(
                 <tr>
                   <td colspan="2"></td>
                   <td style="padding: 15px 0 5px 0; text-align: right; font-weight: bold; color: #64748b;">Subtotal:</td>
-                  <td style="padding: 15px 0 5px 0; text-align: right; font-weight: bold; color: #0f172a;">$${subtotalFormateado(total)}</td>
+                  <td style="padding: 15px 0 5px 0; text-align: right; font-weight: bold; color: #0f172a;">$${subtotal.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td colspan="2"></td>
                   <td style="padding: 5px 0; text-align: right; font-weight: bold; color: #64748b;">Envío:</td>
-                  <td style="padding: 5px 0; text-align: right; font-weight: bold; color: #16a34a;">Gratis</td>
+                  <td style="padding: 5px 0; text-align: right; font-weight: bold; color: ${shippingCost === 0 ? '#16a34a' : '#0f172a'};">${shippingCost === 0 ? 'Gratis' : `$${shippingCost.toFixed(2)}`}</td>
                 </tr>
                 <tr style="border-top: 1px solid #cbd5e1;">
                   <td colspan="2"></td>

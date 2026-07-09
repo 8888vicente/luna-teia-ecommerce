@@ -3,6 +3,7 @@ export const revalidate = 0;
 import ProductStoriesBar from '../../components/ProductStoriesBar';
 import FacebookReviews from '../../components/FacebookReviews';
 import HeroSliderBackground from '../../components/HeroSliderBackground';
+import TrustBadges from '../../components/TrustBadges';
 import CategoriesGrid from '../../components/CategoriesGrid';
 import { getProductsByStore } from '../../lib/productService';
 
@@ -131,6 +132,9 @@ export default async function Home() {
           </p>
         </div>
       </section>
+
+      {/* ── FRANJA DE CONFIANZA — Mercado Pago + Badges ── */}
+      <TrustBadges variant="horizontal" showShippingInfo />
 
       <CategoriesGrid categories={categories} />
 

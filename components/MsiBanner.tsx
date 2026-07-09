@@ -2,21 +2,19 @@
 
 import React from 'react';
 
-// Mensajes que se repiten en el ticker
+// Mensajes de confianza y envío — sin MSI
 const TICKER_MESSAGES = [
-  '🚚 ENVÍO GRATIS en compras de $500+ | Envío a $80 de $200 a $499 | Envío nacional $150',
-  '💳 3 MESES SIN INTERESES · DESDE $1,200 MXN',
-  '✨ 6 MSI EN COMPRAS MAYORES A $2,400 MXN',
-  '🌟 12 MSI EN COMPRAS MAYORES A $4,800 MXN',
-  '💄 PAGA HOY, LUCE MAÑANA · LUNA TEIA',
-  '🚚 ENVÍO GRATIS en compras de $500+ | Envío a $80 de $200 a $499 | Envío nacional $150',
-  '💳 3 MESES SIN INTERESES · DESDE $1,200 MXN',
-  '✨ 6 MSI EN COMPRAS MAYORES A $2,400 MXN',
-  '🌟 12 MSI EN COMPRAS MAYORES A $4,800 MXN',
-  '💄 PAGA HOY, LUCE MAÑANA · LUNA TEIA',
+  '💄 AL COMPRAR 3 LABIALES TU ENVÍO ES DE SOLO $40',
+  '🚚 ENVÍO GRATIS EN PEDIDOS DE $400+',
+  '🔒 COMPRA 100% SEGURA · PROTEGIDA POR MERCADO PAGO',
+  '✨ DESDE 2018 ENVIANDO BELLEZA A TODO MÉXICO',
+  '📦 ENVÍOS CON RASTREO · PAQUETERÍA NACIONAL SEGURA',
 ];
 
 export default function MsiBanner() {
+  // Duplicamos los mensajes para crear un loop seamless
+  const allMessages = [...TICKER_MESSAGES, ...TICKER_MESSAGES];
+
   return (
     <div style={{
       background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
@@ -32,14 +30,14 @@ export default function MsiBanner() {
         background: 'linear-gradient(90deg, transparent, #ffd700, transparent)',
       }} />
 
-      {/* Track del ticker */}
+      {/* Track del ticker — width: max-content + duplicado = loop perfecto */}
       <div style={{
         display: 'flex',
-        gap: '0',
-        animation: 'ticker 35s linear infinite',
+        width: 'max-content',
+        animation: 'ticker 40s linear infinite',
         whiteSpace: 'nowrap',
       }}>
-        {TICKER_MESSAGES.map((msg, i) => (
+        {allMessages.map((msg, i) => (
           <span
             key={i}
             style={{
@@ -49,15 +47,17 @@ export default function MsiBanner() {
               fontSize: '0.78rem',
               fontWeight: '700',
               letterSpacing: '1.5px',
-              color: i % 5 === 0 || i % 5 === 1 || i % 5 === 2
-                ? '#ffd700'   // dorado para MSI
-                : '#ffffff',  // blanco para otros mensajes
-              paddingRight: '4rem',
+              color: i % 5 === 0
+                ? '#ffd700'     // dorado para el mensaje estrella (3 labiales)
+                : i % 5 === 2
+                  ? '#4fc3f7'   // azul claro para Mercado Pago
+                  : '#ffffff',  // blanco para el resto
+              paddingRight: '3rem',
             }}
           >
             {msg}
             {/* Separador tipo diamante entre mensajes */}
-            <span style={{ marginLeft: '4rem', color: '#ffd70066', fontSize: '0.6rem' }}>◆</span>
+            <span style={{ marginLeft: '3rem', color: '#ffd70066', fontSize: '0.6rem' }}>◆</span>
           </span>
         ))}
       </div>

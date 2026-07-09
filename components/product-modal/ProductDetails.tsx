@@ -48,7 +48,7 @@ export default function ProductDetails({
               ✓ Las clientas suelen elegir entre 3 y 5 tonos por pedido
             </p>
             <p style={{ fontSize: '0.75rem', color: '#E65100', fontWeight: '700', margin: 0 }}>
-              🚚 Envío desde $40 y GRATIS a partir de $400
+              🚚 Al comprar 3 labiales tu envío es de solo $40
             </p>
           </div>
         </div>

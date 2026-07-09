@@ -94,14 +94,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  // Lógica de envío de Luna Teia basada en subtotal
+  // Lógica de envío de Luna Teia basada en subtotal (4 franjas unificadas)
   let shippingCost = 150;
   if (subtotal >= 400) {
     shippingCost = 0;      // Gratis desde $400
   } else if (subtotal >= 300) {
-    shippingCost = 40;     // $40 de envío entre $300 y $399
+    shippingCost = 40;     // $40 entre $300 y $399 (sweet spot: 3 labiales)
+  } else if (subtotal >= 200) {
+    shippingCost = 80;     // $80 entre $200 y $299
   } else if (subtotal < 15) {
-    shippingCost = 0;      // Pruebas
+    shippingCost = 0;      // Pruebas / carrito vacío
   }
 
   return (

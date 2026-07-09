@@ -190,9 +190,10 @@ export default function PoliticasPage() {
               El costo de envío se calcula automáticamente en el carrito de compras bajo los siguientes criterios:
             </p>
             <ul style={styles.bulletList}>
-              <li>Compras de <strong>$0.00 a $200.00 MXN</strong>: Envío base de <strong>$150.00 MXN</strong>.</li>
-              <li>Compras de <strong>$200.01 a $499.99 MXN</strong>: Envío preferencial de <strong>$100.00 MXN</strong> (Luna Teia subsidia parte del costo).</li>
-              <li>Compras de <strong>$500.00 MXN o más</strong>: <strong>Envío sin costo (¡GRATIS!)</strong>.</li>
+              <li>Compras de <strong>$1.00 a $199.99 MXN</strong>: Envío estándar de <strong>$150.00 MXN</strong>.</li>
+              <li>Compras de <strong>$200.00 a $299.99 MXN</strong>: Envío preferencial de <strong>$80.00 MXN</strong> (Luna Teia subsidia parte del costo).</li>
+              <li>Compras de <strong>$300.00 a $399.99 MXN</strong>: Envío subsidiado de <strong>$40.00 MXN</strong> (equivale a 3 labiales — ¡tu mejor opción!).</li>
+              <li>Compras de <strong>$400.00 MXN o más</strong>: <strong>Envío sin costo (¡GRATIS!)</strong>.</li>
             </ul>
           </section>
 

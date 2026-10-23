@@ -1,0 +1,106 @@
+.container {
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.bioPage {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #2d3748;
+  background: #ffffff;
+}
+
+.header {
+  border-bottom: 2px solid #1a365d;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.bioPage h1 {
+  color: #1a365d;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 30px;
+  line-height: 1.25;
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #2b6cb0;
+  font-size: 18px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.bioPage h2 {
+  color: #1a365d;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 22px;
+  line-height: 1.35;
+  margin: 0 0 14px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 700;
+}
+
+.bioPage section {
+  margin-bottom: 32px;
+}
+
+.bioPage p {
+  margin: 0 0 16px;
+  line-height: 1.75;
+}
+
+.bioPage ul {
+  padding-left: 22px;
+  margin: 0 0 16px;
+}
+
+.bioPage li {
+  margin-bottom: 8px;
+}
+
+.profileSummary {
+  background: #f7fafc;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #1a365d;
+  border-radius: 4px;
+  margin-bottom: 32px;
+}
+
+.contact {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 18px;
+  font-size: 14px;
+  color: #4a5568;
+}
+
+.contact p {
+  margin: 0 0 10px;
+}
+
+.bioPage a {
+  color: #2b6cb0;
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .bioPage {
+    padding: 18px 14px;
+    font-size: 15px;
+  }
+
+  .bioPage h1 {
+    font-size: 26px;
+  }
+
+  .bioPage h2 {
+    font-size: 20px;
+  }
+}
